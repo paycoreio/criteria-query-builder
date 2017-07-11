@@ -6,6 +6,8 @@ namespace Paymaxi\Component\Query\Filter;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
+use Paymaxi\Component\Query\Validator\Adapter\ArrayAdapter;
+use Paymaxi\Component\Query\Validator\ValidatorInterface;
 
 /**
  * Class DynamicEnumerationFilter
@@ -38,6 +40,14 @@ final class DynamicEnumerationFilter extends AbstractFilter
 
         $this->dynamicFilter = $dynamicFilter;
         $this->delimiter = $delimiter;
+    }
+
+    /**
+     * @param ValidatorInterface $validator
+     */
+    public function setValidator(ValidatorInterface $validator)
+    {
+        parent::setValidator(new ArrayAdapter($validator));
     }
 
     /**
