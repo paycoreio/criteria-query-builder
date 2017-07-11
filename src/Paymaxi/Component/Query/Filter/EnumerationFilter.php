@@ -6,21 +6,25 @@ namespace Paymaxi\Component\Query\Filter;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
+use Paymaxi\Component\Query\Validator\Adapter\ArrayAdapter;
+use Paymaxi\Component\Query\Validator\DummyValidator;
 
-class EnumerationFilter extends AbstractFilter
+final class EnumerationFilter extends AbstractFilter
 {
+    /** @var string */
+    private $delimiter;
+
     /**
      * EnumerationFilter constructor.
      *
      * @param string $queryField
      * @param string $fieldName
-     * @param string $enumerationClass
+     * @param string $delimiter
      */
-    public function __construct(string $queryField, string $fieldName, string $enumerationClass)
+    public function __construct(string $queryField, string $fieldName, string $delimiter = ',')
     {
-        parent::__construct($queryField, $fieldName, function ($value) use ($enumerationClass) {
-            return call_user_func([$enumerationClass, 'validateValue'], $value);
-        });
+        parent::__construct($queryField, $fieldName, new ArrayAdapter(new DummyValidator()));
+        $this->delimiter = $delimiter;
     }
 
     /**
@@ -30,34 +34,12 @@ class EnumerationFilter extends AbstractFilter
      */
     public function apply(QueryBuilder $queryBuilder, Criteria $criteria, $value)
     {
-        $values = explode(',', $value);
+        $values = explode($this->delimiter, $value);
 
         if (!$this->validate($values)) {
-            $this->throwValidationException(
-                sprintf('Invalid value provided for key `%s`.', $this->getQueryField())
-            );
+            $this->thrower->invalidValueForKey($this->getQueryField());
         }
 
         $criteria->andWhere(Criteria::expr()->in($this->fieldName, $values));
-    }
-
-    /**
-     * @param $values
-     *
-     * @return bool
-     */
-    protected function validate($values)
-    {
-        if (empty($values)) {
-            return false;
-        }
-
-        foreach ($values as $item) {
-            if (!parent::validate($item)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 }

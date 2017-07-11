@@ -35,9 +35,6 @@ final class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
     /** @var \Doctrine\ORM\QueryBuilder */
     private $qb;
 
-    /** @var bool */
-    private $cached = false;
-
     /**
      * @param EntityRepository $repository
      * @param array $filterParams
@@ -82,12 +79,7 @@ final class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
      */
     public function getQb()
     {
-        if (!$this->cached) {
-            $this->cached = true;
-            $this->qb->addCriteria($this->buildCriteria());
-        }
-
-        return $this->qb;
+        return (clone $this)->qb->addCriteria($this->buildCriteria());
     }
 
     /**

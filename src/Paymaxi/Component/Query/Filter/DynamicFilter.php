@@ -6,8 +6,9 @@ namespace Paymaxi\Component\Query\Filter;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
+use Paymaxi\Component\Query\Validator\Adapter\CallableAdapter;
 
-class DynamicFilter extends AbstractFilter
+final class DynamicFilter extends AbstractFilter
 {
     /** @var callable */
     private $dynamicFilter;
@@ -21,9 +22,9 @@ class DynamicFilter extends AbstractFilter
      */
     public function __construct(string $queryField, string $fieldName, callable $dynamicFilter)
     {
-        parent::__construct($queryField, $fieldName, function ($value) {
+        parent::__construct($queryField, $fieldName, new CallableAdapter(function ($value) {
             return is_scalar($value);
-        });
+        }));
 
         $this->dynamicFilter = $dynamicFilter;
     }
@@ -38,9 +39,7 @@ class DynamicFilter extends AbstractFilter
     public function apply(QueryBuilder $queryBuilder, Criteria $criteria, $value)
     {
         if (!$this->validate($value)) {
-            $this->throwValidationException(
-                sprintf('Invalid value provided for key `%s`.', $this->getQueryField())
-            );
+            $this->thrower->invalidValueForKey($this->getQueryField());
         }
 
         call_user_func_array($this->dynamicFilter, [$queryBuilder, $value]);
