@@ -51,8 +51,8 @@ abstract class AbstractFilter implements FilterInterface
             $validator = new ScalarValidator();
         }
         
-        $this->validator = $validator;
-        $this->thrower = new JsonApiExceptionThrowerAdapter();
+        $this->setValidator($validator);
+        $this->setThrower(new JsonApiExceptionThrowerAdapter());
     }
 
     /**
