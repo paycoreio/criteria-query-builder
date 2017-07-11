@@ -7,10 +7,12 @@ namespace Paymaxi\Component\Query\Filter;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
 use Paymaxi\Component\Query\Operator\OperatorInterface;
-use Paymaxi\Component\Query\Validator\DummyValidator;
+
 
 /**
- * Class DateFilter
+ * Class DefaultFilter
+ *
+ * @package Paymaxi\Component\Query\Filter
  */
 final class DefaultFilter extends AbstractFilter
 {
@@ -24,9 +26,9 @@ final class DefaultFilter extends AbstractFilter
      * @param string $fieldName
      * @param array $operators
      */
-    public function __construct(string $queryField, string $fieldName, array $operators = [])
+    public function __construct(string $queryField, string $fieldName = null, array $operators = [])
     {
-        parent::__construct($queryField, $fieldName, new DummyValidator());
+        parent::__construct($queryField, $fieldName);
 
         foreach ($operators as $operator) {
             $this->addOperator($operator);
@@ -89,9 +91,9 @@ final class DefaultFilter extends AbstractFilter
      * @param OperatorInterface $operator
      * @param $value
      *
-     * @return true
+     * @return bool|true
      */
-    protected function validateWithOperator(OperatorInterface $operator, $value)
+    protected function validateWithOperator(OperatorInterface $operator, $value): bool
     {
         if (null !== $operator->getValidator()) {
             return call_user_func($operator->getValidator(), $value);

@@ -6,26 +6,14 @@ namespace Paymaxi\Component\Query\Filter;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
-use Paymaxi\Component\Query\Validator\Adapter\CallableAdapter;
 
 /**
- * Class ScalarValidator
+ * Class ScalarFilter
+ *
+ * @package Paymaxi\Component\Query\Filter
  */
 final class ScalarFilter extends AbstractFilter
 {
-    /**
-     * ScalarValidator constructor.
-     *
-     * @param string $queryField
-     * @param string $fieldName
-     */
-    public function __construct(string $queryField, string $fieldName)
-    {
-        parent::__construct($queryField, $fieldName, new CallableAdapter(function ($value) {
-            return is_scalar($value);
-        }));
-    }
-
     /**
      * @param QueryBuilder $queryBuilder
      * @param Criteria $criteria

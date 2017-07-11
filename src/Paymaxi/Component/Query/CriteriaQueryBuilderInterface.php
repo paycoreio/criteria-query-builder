@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Paymaxi\Component\Query;
 
+use Doctrine\ORM\QueryBuilder;
 use Paymaxi\Component\Query\Filter\FilterInterface;
 use Paymaxi\Component\Query\Sort\SortInterface;
 
@@ -29,7 +30,7 @@ interface CriteriaQueryBuilderInterface
     /**
      * @return \Doctrine\ORM\QueryBuilder
      */
-    public function getQb();
+    public function getQb(): QueryBuilder;
 
     /**
      * @param array $defaultOrder
@@ -41,5 +42,5 @@ interface CriteriaQueryBuilderInterface
     /**
      * @return array
      */
-    public function getDefaultOrder();
+    public function getDefaultOrder(): array;
 }

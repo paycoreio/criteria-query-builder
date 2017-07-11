@@ -1,9 +1,15 @@
 <?php
+declare(strict_types=1);
 
 
 namespace Paymaxi\Component\Query\Exception;
 
 
+/**
+ * Interface QueryExceptionThrowerInterface
+ *
+ * @package Paymaxi\Component\Query\Exception
+ */
 interface QueryExceptionThrowerInterface
 {
     /**

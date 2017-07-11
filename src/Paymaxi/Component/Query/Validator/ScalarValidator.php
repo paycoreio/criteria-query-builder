@@ -1,16 +1,15 @@
 <?php
 declare(strict_types=1);
 
-
 namespace Paymaxi\Component\Query\Validator;
 
 
 /**
- * Class DummyValidator
+ * Class ScalarValidator
  *
  * @package Paymaxi\Component\Query\Validator
  */
-final class DummyValidator implements ValidatorInterface
+final class ScalarValidator implements ValidatorInterface
 {
     /**
      * @param $value
@@ -19,6 +18,6 @@ final class DummyValidator implements ValidatorInterface
      */
     public function validate($value): bool
     {
-        return true;
+        return is_scalar($value);
     }
 }

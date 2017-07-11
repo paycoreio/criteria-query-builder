@@ -7,6 +7,11 @@ namespace Paymaxi\Component\Query\Sort;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
 
+/**
+ * Class Sorting
+ *
+ * @package Paymaxi\Component\Query\Sort
+ */
 class Sorting implements SortInterface
 {
     /** @var string */
@@ -18,6 +23,13 @@ class Sorting implements SortInterface
     /** @var callable */
     private $dynamicSorting;
 
+    /**
+     * Sorting constructor.
+     *
+     * @param string $queryField
+     * @param string $fieldName
+     * @param callable|null $dynamicSorting
+     */
     public function __construct(string $queryField, string $fieldName, callable $dynamicSorting = null)
     {
         $this->queryField = $queryField;
@@ -41,15 +53,27 @@ class Sorting implements SortInterface
         return $this->fieldName;
     }
 
-    public function supports(string $field)
+    /**
+     * @param string $field
+     *
+     * @return bool
+     */
+    public function supports(string $field): bool
     {
         return $field === $this->getQueryField();
     }
 
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param Criteria $criteria
+     * @param $order
+     *
+     * @return mixed|void
+     */
     public function apply(QueryBuilder $queryBuilder, Criteria $criteria, $order)
     {
         if (null !== $this->dynamicSorting) {
-            call_user_func_array($this->dynamicSorting, [$queryBuilder]);
+            call_user_func($this->dynamicSorting, $queryBuilder);
         }
 
         $criteria->orderBy([$this->getFieldName() => $order]);

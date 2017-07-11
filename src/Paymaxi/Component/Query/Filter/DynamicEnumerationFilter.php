@@ -1,21 +1,24 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Paymaxi\Component\Query\Filter;
+
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
 
 /**
- * Class DynamicFilter
+ * Class DynamicEnumerationFilter
  *
  * @package Paymaxi\Component\Query\Filter
  */
-final class DynamicFilter extends AbstractFilter
+final class DynamicEnumerationFilter extends AbstractFilter
 {
     /** @var callable */
     private $dynamicFilter;
+
+    /** @var string */
+    private $delimiter;
 
     /**
      * DynamicFilter constructor.
@@ -23,12 +26,18 @@ final class DynamicFilter extends AbstractFilter
      * @param string $queryField
      * @param string $fieldName
      * @param callable $dynamicFilter
+     * @param string $delimiter
      */
-    public function __construct(string $queryField, string $fieldName = null, callable $dynamicFilter)
-    {
+    public function __construct(
+        string $queryField,
+        string $fieldName = null,
+        callable $dynamicFilter,
+        string $delimiter = ','
+    ) {
         parent::__construct($queryField, $fieldName = null);
 
         $this->dynamicFilter = $dynamicFilter;
+        $this->delimiter = $delimiter;
     }
 
     /**
@@ -40,10 +49,12 @@ final class DynamicFilter extends AbstractFilter
      */
     public function apply(QueryBuilder $queryBuilder, Criteria $criteria, $value)
     {
-        if (!$this->validate($value)) {
+        $values = explode($this->delimiter, $value);
+
+        if (!$this->validate($values)) {
             $this->thrower->invalidValueForKey($this->getQueryField());
         }
 
-        call_user_func($this->dynamicFilter, $queryBuilder, $value);
+        call_user_func($this->dynamicFilter, $queryBuilder, $values);
     }
 }

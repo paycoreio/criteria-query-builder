@@ -7,8 +7,13 @@ namespace Paymaxi\Component\Query\Filter;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
 use Paymaxi\Component\Query\Validator\Adapter\ArrayAdapter;
-use Paymaxi\Component\Query\Validator\DummyValidator;
+use Paymaxi\Component\Query\Validator\ValidatorInterface;
 
+/**
+ * Class EnumerationFilter
+ *
+ * @package Paymaxi\Component\Query\Filter
+ */
 final class EnumerationFilter extends AbstractFilter
 {
     /** @var string */
@@ -21,11 +26,20 @@ final class EnumerationFilter extends AbstractFilter
      * @param string $fieldName
      * @param string $delimiter
      */
-    public function __construct(string $queryField, string $fieldName, string $delimiter = ',')
+    public function __construct(string $queryField, string $fieldName = null, string $delimiter = ',')
     {
-        parent::__construct($queryField, $fieldName, new ArrayAdapter(new DummyValidator()));
+        parent::__construct($queryField, $fieldName);
         $this->delimiter = $delimiter;
     }
+
+    /**
+     * @param ValidatorInterface $validator
+     */
+    public function setValidator(ValidatorInterface $validator)
+    {
+        parent::setValidator(new ArrayAdapter($validator));
+    }
+
 
     /**
      * @param QueryBuilder $queryBuilder
