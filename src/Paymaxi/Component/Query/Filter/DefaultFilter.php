@@ -8,10 +8,13 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
 use Paymaxi\Component\Query\Operator\OperatorInterface;
 
+
 /**
- * Class DateFilter
+ * Class DefaultFilter
+ *
+ * @package Paymaxi\Component\Query\Filter
  */
-class DefaultFilter extends AbstractFilter
+final class DefaultFilter extends AbstractFilter
 {
     /** @var OperatorInterface[] */
     private $operators;
@@ -23,11 +26,9 @@ class DefaultFilter extends AbstractFilter
      * @param string $fieldName
      * @param array $operators
      */
-    public function __construct(string $queryField, string $fieldName, array $operators = [])
+    public function __construct(string $queryField, string $fieldName = null, array $operators = [])
     {
-        parent::__construct($queryField, $fieldName, function ($value) {
-            return true;
-        });
+        parent::__construct($queryField, $fieldName);
 
         foreach ($operators as $operator) {
             $this->addOperator($operator);
@@ -35,26 +36,15 @@ class DefaultFilter extends AbstractFilter
     }
 
     /**
-     * @param callable $validator
-     */
-    public function setDefaultValidator(callable $validator)
-    {
-        $this->defaultValidator = $validator;
-    }
-
-    /**
      * @param OperatorInterface $operator
-     * @param $value
      *
-     * @return true
+     * @return $this
      */
-    protected function validateWithOperator(OperatorInterface $operator, $value)
+    public function addOperator(OperatorInterface $operator)
     {
-        if (null !== $operator->getValidator()) {
-            return call_user_func($operator->getValidator(), $value);
-        }
+        $this->operators[$operator->getQueryOperator()] = $operator;
 
-        return parent::validate($value);
+        return $this;
     }
 
     /**
@@ -67,24 +57,20 @@ class DefaultFilter extends AbstractFilter
     public function apply(QueryBuilder $queryBuilder, Criteria $criteria, $values)
     {
         if (!is_array($values)) {
-            $this->throwValidationException(
-                sprintf('Invalid value provided for field `%s`. Value should be an array.', $this->queryField)
-            );
+            $this->thrower->invalidValueForField($this->getQueryField(), 'array');
         }
 
         $values = (array) $values;
 
         foreach ($values as $queryOperator => $value) {
             if (!array_key_exists($queryOperator, $this->operators)) {
-                $this->throwValidationException(sprintf('Operator `%s` does not defined.', $queryOperator));
+                $this->thrower->operatorIsNotDefined($queryOperator);
             }
 
             $operator = $this->operators[$queryOperator];
 
             if (!$this->validateWithOperator($operator, $value)) {
-                $this->throwValidationException(
-                    sprintf('Invalid value provided for operator `%s`.', $operator->getQueryOperator())
-                );
+                $this->thrower->invalidValueForOperator($operator->getQueryOperator());
             }
 
             $value = $operator->normalize($value);
@@ -103,13 +89,16 @@ class DefaultFilter extends AbstractFilter
 
     /**
      * @param OperatorInterface $operator
+     * @param $value
      *
-     * @return $this
+     * @return bool|true
      */
-    public function addOperator(OperatorInterface $operator)
+    protected function validateWithOperator(OperatorInterface $operator, $value): bool
     {
-        $this->operators[$operator->getQueryOperator()] = $operator;
+        if (null !== $operator->getValidator()) {
+            return call_user_func($operator->getValidator(), $value);
+        }
 
-        return $this;
+        return parent::validate($value);
     }
 }

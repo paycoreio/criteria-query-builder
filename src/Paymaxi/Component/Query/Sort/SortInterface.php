@@ -7,6 +7,11 @@ namespace Paymaxi\Component\Query\Sort;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
 
+/**
+ * Interface SortInterface
+ *
+ * @package Paymaxi\Component\Query\Sort
+ */
 interface SortInterface
 {
     /**
@@ -19,7 +24,19 @@ interface SortInterface
      */
     public function getFieldName(): string;
 
+    /**
+     * @param string $field
+     *
+     * @return mixed
+     */
     public function supports(string $field);
 
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param Criteria $criteria
+     * @param $order
+     *
+     * @return mixed
+     */
     public function apply(QueryBuilder $queryBuilder, Criteria $criteria, $order);
 }

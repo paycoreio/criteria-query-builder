@@ -15,7 +15,7 @@ use Paymaxi\Component\Query\Sort\SortInterface;
 final class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
 {
     /** @var SortInterface[] */
-    protected $sortedFields = [];
+    private $sortedFields = [];
 
     /** @var FilterInterface[] */
     private $filters = [];
@@ -34,9 +34,6 @@ final class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
 
     /** @var \Doctrine\ORM\QueryBuilder */
     private $qb;
-
-    /** @var bool */
-    private $cached = false;
 
     /**
      * @param EntityRepository $repository
@@ -80,20 +77,15 @@ final class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
     /**
      * @return \Doctrine\ORM\QueryBuilder
      */
-    public function getQb()
+    public function getQb(): \Doctrine\ORM\QueryBuilder
     {
-        if (!$this->cached) {
-            $this->cached = true;
-            $this->qb->addCriteria($this->buildCriteria());
-        }
-
-        return $this->qb;
+        return (clone $this)->qb->addCriteria($this->buildCriteria());
     }
 
     /**
      * @return Criteria
      */
-    private function buildCriteria()
+    private function buildCriteria(): Criteria
     {
         $this->applyFilters();
         $this->applySorting();
@@ -130,7 +122,7 @@ final class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
     /**
      * @return array
      */
-    public function getDefaultOrder()
+    public function getDefaultOrder(): array
     {
         return !empty($this->defaultOrder) ? $this->defaultOrder : ['created' => 'DESC'];
     }

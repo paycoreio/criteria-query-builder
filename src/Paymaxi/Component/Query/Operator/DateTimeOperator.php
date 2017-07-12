@@ -7,9 +7,11 @@ namespace Paymaxi\Component\Query\Operator;
 use Carbon\Carbon;
 
 /**
- * Class Operator
+ * Class DateTimeOperator
+ *
+ * @package Paymaxi\Component\Query\Operator
  */
-class DateTimeOperator extends Operator
+final class DateTimeOperator extends Operator
 {
     /**
      * DateTimeOperator constructor.

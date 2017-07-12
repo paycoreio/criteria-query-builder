@@ -17,7 +17,7 @@ interface FilterInterface
      *
      * @return bool
      */
-    public function supports(string $field);
+    public function supports(string $field): bool;
 
     /**
      * @param QueryBuilder $queryBuilder

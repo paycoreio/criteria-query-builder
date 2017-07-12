@@ -6,17 +6,21 @@ namespace Paymaxi\Component\Query\Filter;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
-use Neomerx\JsonApi\Document\Error;
-use Neomerx\JsonApi\Exceptions\JsonApiException;
-use Ramsey\Uuid\Uuid;
+use Paymaxi\Component\Query\Exception\Adapter\JsonApiExceptionThrowerAdapter;
+use Paymaxi\Component\Query\Exception\QueryExceptionThrowerInterface;
+use Paymaxi\Component\Query\Validator\ScalarValidator;
+use Paymaxi\Component\Query\Validator\ValidatorInterface;
+
 
 /**
  * Class AbstractFilter
+ *
+ * @package Paymaxi\Component\Query\Filter
  */
 abstract class AbstractFilter implements FilterInterface
 {
-    /** @var callable */
-    protected $defaultValidator;
+    /** @var ValidatorInterface */
+    protected $validator;
 
     /** @var string */
     protected $fieldName;
@@ -24,26 +28,39 @@ abstract class AbstractFilter implements FilterInterface
     /** @var string */
     protected $queryField;
 
+    /** @var QueryExceptionThrowerInterface */
+    protected $thrower;
+
     /**
      * AbstractFilter constructor.
      *
      * @param string $queryField
      * @param string $fieldName
-     * @param callable $defaultValidator
+     * @param ValidatorInterface $validator
      */
-    public function __construct(string $queryField, string $fieldName, callable $defaultValidator)
+    public function __construct(string $queryField, string $fieldName = null, ValidatorInterface $validator = null)
     {
+        if (null === $fieldName) {
+            $fieldName = $queryField;
+        }
+        
         $this->fieldName = $fieldName;
         $this->queryField = $queryField;
-        $this->defaultValidator = $defaultValidator;
+
+        if (null === $validator) {
+            $validator = new ScalarValidator();
+        }
+        
+        $this->setValidator($validator);
+        $this->setThrower(new JsonApiExceptionThrowerAdapter());
     }
 
     /**
-     * @param callable $defaultValidator
+     * @param ValidatorInterface $validator
      */
-    public function setDefaultValidator(callable $defaultValidator)
+    public function setValidator(ValidatorInterface $validator)
     {
-        $this->defaultValidator = $defaultValidator;
+        $this->validator = $validator;
     }
 
     /**
@@ -55,6 +72,16 @@ abstract class AbstractFilter implements FilterInterface
     }
 
     /**
+     * @param string $field
+     *
+     * @return bool
+     */
+    public function supports(string $field): bool
+    {
+        return $field === $this->getQueryField();
+    }
+
+    /**
      * @return string
      */
     public function getQueryField(): string
@@ -63,37 +90,29 @@ abstract class AbstractFilter implements FilterInterface
     }
 
     /**
-     * @param string $field
+     * @param QueryBuilder $queryBuilder
+     * @param Criteria $criteria
+     * @param $value
      *
-     * @return bool
+     * @return void
      */
-    public function supports(string $field)
-    {
-        return $field === $this->getQueryField();
-    }
-
-    protected function validate($value)
-    {
-        return call_user_func($this->defaultValidator, $value);
-    }
-
     abstract public function apply(QueryBuilder $queryBuilder, Criteria $criteria, $value);
 
     /**
-     * @param $message
+     * @param QueryExceptionThrowerInterface $thrower
      */
-    protected function throwValidationException(string $message)
+    public function setThrower(QueryExceptionThrowerInterface $thrower)
     {
-        $uuid = Uuid::getFactory()->uuid4()->toString();
+        $this->thrower = $thrower;
+    }
 
-        $error = new Error(
-            $uuid,
-            null,
-            'error',
-            400,
-            $message
-        );
-
-        throw new JsonApiException($error);
+    /**
+     * @param $value
+     *
+     * @return bool
+     */
+    protected function validate($value): bool
+    {
+        return $this->validator->validate($value);
     }
 }
