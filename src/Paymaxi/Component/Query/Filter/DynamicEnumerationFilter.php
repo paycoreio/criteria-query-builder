@@ -26,17 +26,15 @@ final class DynamicEnumerationFilter extends AbstractFilter
      * DynamicFilter constructor.
      *
      * @param string $queryField
-     * @param string $fieldName
      * @param callable $dynamicFilter
      * @param string $delimiter
      */
     public function __construct(
         string $queryField,
-        string $fieldName = null,
         callable $dynamicFilter,
         string $delimiter = ','
     ) {
-        parent::__construct($queryField, $fieldName = null);
+        parent::__construct($queryField);
 
         $this->dynamicFilter = $dynamicFilter;
         $this->delimiter = $delimiter;

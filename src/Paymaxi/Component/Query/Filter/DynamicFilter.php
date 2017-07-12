@@ -21,12 +21,11 @@ final class DynamicFilter extends AbstractFilter
      * DynamicFilter constructor.
      *
      * @param string $queryField
-     * @param string $fieldName
      * @param callable $dynamicFilter
      */
-    public function __construct(string $queryField, string $fieldName = null, callable $dynamicFilter)
+    public function __construct(string $queryField, callable $dynamicFilter)
     {
-        parent::__construct($queryField, $fieldName = null);
+        parent::__construct($queryField);
 
         $this->dynamicFilter = $dynamicFilter;
     }
