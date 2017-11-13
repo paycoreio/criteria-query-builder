@@ -70,7 +70,7 @@ class Sorting implements SortInterface
      *
      * @return mixed|void
      */
-    public function apply(QueryBuilder $queryBuilder, Criteria $criteria, $order)
+    public function apply(QueryBuilder $queryBuilder, Criteria $criteria, $order): void
     {
         if (null !== $this->dynamicSorting) {
             call_user_func($this->dynamicSorting, $queryBuilder);
