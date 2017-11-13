@@ -27,16 +27,16 @@ interface SortInterface
     /**
      * @param string $field
      *
-     * @return mixed
+     * @return bool
      */
-    public function supports(string $field);
+    public function supports(string $field): bool;
 
     /**
      * @param QueryBuilder $queryBuilder
      * @param Criteria $criteria
      * @param $order
      *
-     * @return mixed
+     * @return void
      */
-    public function apply(QueryBuilder $queryBuilder, Criteria $criteria, $order);
+    public function apply(QueryBuilder $queryBuilder, Criteria $criteria, $order): void;
 }

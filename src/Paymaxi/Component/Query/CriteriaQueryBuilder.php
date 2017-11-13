@@ -42,12 +42,12 @@ final class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
      *
      * @internal param ApiManagerInterface $manager
      */
-    public function __construct(EntityRepository $repository, array $filterParams, array $sortingFields)
+    public function __construct(EntityRepository $repository, array $filterParams = [], array $sortingFields = [])
     {
         $this->qb = $repository->createQueryBuilder('e');
         $this->criteria = new Criteria();
-        $this->filterParams = $filterParams;
-        $this->sortingFields = $sortingFields;
+        $this->setFilterParams($filterParams);
+        $this->setSortingFields($sortingFields);
     }
 
     /**
@@ -133,5 +133,21 @@ final class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
     public function setDefaultOrder(array $defaultOrder)
     {
         $this->defaultOrder = $defaultOrder;
+    }
+
+    /**
+     * @param array $filterParams
+     */
+    public function setFilterParams(array $filterParams)
+    {
+        $this->filterParams = $filterParams;
+    }
+
+    /**
+     * @param array $sortingFields
+     */
+    public function setSortingFields(array $sortingFields)
+    {
+        $this->sortingFields = $sortingFields;
     }
 }
