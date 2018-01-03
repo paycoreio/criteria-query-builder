@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Paymaxi\Component\Query\Validator;
 
-
 /**
  * Interface ValidatorInterface
  *
@@ -13,7 +12,7 @@ namespace Paymaxi\Component\Query\Validator;
 interface ValidatorInterface
 {
     /**
-     * @param $value
+     * @param mixed $value
      *
      * @return bool
      */

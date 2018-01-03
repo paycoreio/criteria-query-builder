@@ -27,13 +27,13 @@ final class ArrayAdapter implements ValidatorInterface
     }
 
     /**
-     * @param $value
+     * @param mixed $value
      *
      * @return bool
      */
     public function validate($value): bool
     {
-        if (!is_array($value) || 0 === count($value)) {
+        if (!\is_array($value) || 0 === \count($value)) {
             return false;
         }
 

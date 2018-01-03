@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Paymaxi\Component\Query\Validator;
 
-
 /**
  * Class DummyValidator
  *
@@ -13,7 +12,7 @@ namespace Paymaxi\Component\Query\Validator;
 final class DummyValidator implements ValidatorInterface
 {
     /**
-     * @param $value
+     * @param mixed $value
      *
      * @return bool
      */

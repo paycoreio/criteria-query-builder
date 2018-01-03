@@ -10,25 +10,25 @@ use Paymaxi\Component\Query\Exception\QueryExceptionThrowerInterface;
 use Ramsey\Uuid\Uuid;
 
 /**
- * Class JsonApiExceptionThrowerAdapter
+ * Class JsonApiExceptionThrower
  *
  * @package Paymaxi\Component\Query\Exception
  */
-final class JsonApiExceptionThrowerAdapter implements QueryExceptionThrowerInterface
+final class JsonApiExceptionThrower implements QueryExceptionThrowerInterface
 {
 
     /**
      * @param string $key
      */
-    public function invalidValueForKey(string $key)
+    public function invalidValueForKey(string $key): void
     {
         $this->throwException(sprintf('Invalid value provided for key `%s`.', $key));
     }
 
     /**
-     * @param $message
+     * @param string $message
      */
-    private function throwException($message)
+    private function throwException(string $message)
     {
         $uuid = Uuid::getFactory()->uuid4()->toString();
 
@@ -46,7 +46,7 @@ final class JsonApiExceptionThrowerAdapter implements QueryExceptionThrowerInter
     /**
      * @param string $operator
      */
-    public function operatorIsNotDefined(string $operator)
+    public function operatorIsNotDefined(string $operator): void
     {
         $this->throwException(sprintf('Operator `%s` does not defined.', $operator));
     }
@@ -54,7 +54,7 @@ final class JsonApiExceptionThrowerAdapter implements QueryExceptionThrowerInter
     /**
      * @param string $operator
      */
-    public function invalidValueForOperator(string $operator)
+    public function invalidValueForOperator(string $operator): void
     {
         $this->throwException(sprintf('Invalid value provided for operator `%s`.', $operator));
     }
@@ -65,11 +65,10 @@ final class JsonApiExceptionThrowerAdapter implements QueryExceptionThrowerInter
      *
      * @throws \Throwable
      */
-    public function invalidValueForField(string $field, string $expectedType)
+    public function invalidValueForField(string $field, string $expectedType): void
     {
         $this->throwException(
             sprintf('Invalid value provided for field `%s`. Expected %s type.', $field, $expectedType)
         );
-
     }
 }

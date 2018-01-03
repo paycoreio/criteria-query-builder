@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Paymaxi\Component\Query\Filter;
 
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\QueryBuilder;
 use Paymaxi\Component\Query\Validator\Adapter\CallableAdapter;
 
 /**
@@ -13,11 +12,11 @@ use Paymaxi\Component\Query\Validator\Adapter\CallableAdapter;
  *
  * @package Paymaxi\Component\Query\Filter
  */
-final class BooleanFilter extends AbstractFilter
+final class BooleanFilter extends AbstractFilter implements CriteriaFilterInterface
 {
-    const CAST_NUMERIC_STRINGS = 1;
-    const CAST_BOOLEAN_STRINGS = 2;
-    const CAST_STRINGS = 4;
+    public const CAST_NUMERIC_STRINGS = 1;
+    public const CAST_BOOLEAN_STRINGS = 2;
+    public const CAST_STRINGS = 4;
 
     /** @var int */
     private $options;
@@ -37,22 +36,22 @@ final class BooleanFilter extends AbstractFilter
         parent::__construct($queryField, $fieldName);
 
         $this->setValidator(new CallableAdapter(function ($value) {
-            return is_bool($value);
+            return \is_bool($value);
         }));
 
         $this->options = $options;
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
      * @param Criteria $criteria
-     * @param $value
+     * @param mixed $value
      *
      * @return void
+     * @throws \Throwable
      */
-    public function apply(QueryBuilder $queryBuilder, Criteria $criteria, $value)
+    public function apply(Criteria $criteria, $value): void
     {
-        if (is_string($value)) {
+        if (\is_string($value)) {
             $value = strtolower($value);
 
             if ($this->options & self::CAST_NUMERIC_STRINGS && ($value === '1' || $value === '0')) {

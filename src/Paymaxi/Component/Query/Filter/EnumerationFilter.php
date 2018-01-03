@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Paymaxi\Component\Query\Filter;
 
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\QueryBuilder;
 use Paymaxi\Component\Query\Validator\Adapter\ArrayAdapter;
 use Paymaxi\Component\Query\Validator\ValidatorInterface;
 
@@ -14,7 +13,7 @@ use Paymaxi\Component\Query\Validator\ValidatorInterface;
  *
  * @package Paymaxi\Component\Query\Filter
  */
-final class EnumerationFilter extends AbstractFilter
+final class EnumerationFilter extends AbstractFilter implements CriteriaFilterInterface
 {
     /** @var string */
     private $delimiter;
@@ -42,11 +41,12 @@ final class EnumerationFilter extends AbstractFilter
 
 
     /**
-     * @param QueryBuilder $queryBuilder
      * @param Criteria $criteria
-     * @param $value
+     * @param mixed $value
+     *
+     * @throws \Throwable
      */
-    public function apply(QueryBuilder $queryBuilder, Criteria $criteria, $value)
+    public function apply(Criteria $criteria, $value): void
     {
         $values = explode($this->delimiter, $value);
 

@@ -67,18 +67,18 @@ class Operator implements OperatorInterface
     /**
      * @return callable|null
      */
-    public function getValidator()
+    public function getValidator(): ?callable
     {
         return $this->validator;
     }
 
     /**
-     * @param $value
+     * @param mixed $value
      *
      * @return mixed
      */
     public function normalize($value)
     {
-        return call_user_func($this->normalizer, $value);
+        return \call_user_func($this->normalizer, $value);
     }
 }

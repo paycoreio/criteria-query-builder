@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace Paymaxi\Component\Query\Filter;
 
-
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
 use Paymaxi\Component\Query\Validator\Adapter\ArrayAdapter;
 use Paymaxi\Component\Query\Validator\ValidatorInterface;
@@ -14,7 +12,7 @@ use Paymaxi\Component\Query\Validator\ValidatorInterface;
  *
  * @package Paymaxi\Component\Query\Filter
  */
-final class DynamicEnumerationFilter extends AbstractFilter
+final class DynamicEnumerationFilter extends AbstractFilter implements QueryBuilderFilterInterface
 {
     /** @var callable */
     private $dynamicFilter;
@@ -50,12 +48,12 @@ final class DynamicEnumerationFilter extends AbstractFilter
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param Criteria $criteria
-     * @param $value
+     * @param mixed $value
      *
      * @return void
+     * @throws \Throwable
      */
-    public function apply(QueryBuilder $queryBuilder, Criteria $criteria, $value)
+    public function apply(QueryBuilder $queryBuilder, $value): void
     {
         $values = explode($this->delimiter, $value);
 
@@ -63,6 +61,6 @@ final class DynamicEnumerationFilter extends AbstractFilter
             $this->thrower->invalidValueForKey($this->getQueryField());
         }
 
-        call_user_func($this->dynamicFilter, $queryBuilder, $values);
+        \call_user_func($this->dynamicFilter, $queryBuilder, $values);
     }
 }
