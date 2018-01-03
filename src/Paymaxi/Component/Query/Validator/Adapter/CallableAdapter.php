@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Paymaxi\Component\Query\Validator\Adapter;
 
-
 use Paymaxi\Component\Query\Validator\ValidatorInterface;
 
 /**
@@ -28,12 +27,12 @@ final class CallableAdapter implements ValidatorInterface
     }
 
     /**
-     * @param $value
+     * @param mixed $value
      *
      * @return bool
      */
     public function validate($value): bool
     {
-        return call_user_func($this->callable, $value);
+        return \call_user_func($this->callable, $value);
     }
 }

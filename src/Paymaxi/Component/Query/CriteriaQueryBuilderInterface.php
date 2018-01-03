@@ -37,7 +37,7 @@ interface CriteriaQueryBuilderInterface
      *
      * @return void
      */
-    public function setDefaultOrder(array $defaultOrder);
+    public function setDefaultOrder(array $defaultOrder): void;
 
     /**
      * @return array

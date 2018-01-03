@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Paymaxi\Component\Query\Validator;
 
-
 /**
  * Class ScalarValidator
  *
@@ -12,12 +11,12 @@ namespace Paymaxi\Component\Query\Validator;
 final class ScalarValidator implements ValidatorInterface
 {
     /**
-     * @param $value
+     * @param mixed $value
      *
      * @return bool
      */
     public function validate($value): bool
     {
-        return is_scalar($value);
+        return \is_scalar($value);
     }
 }

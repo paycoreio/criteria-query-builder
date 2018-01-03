@@ -7,19 +7,18 @@ namespace Paymaxi\Component\Query;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Paymaxi\Component\Query\Filter\FilterInterface;
+use Paymaxi\Component\Query\Handler\AbstractHandler;
+use Paymaxi\Component\Query\Handler\CriteriaHandler;
+use Paymaxi\Component\Query\Handler\HandlerInterface;
+use Paymaxi\Component\Query\Handler\QueryBuilderHandler;
 use Paymaxi\Component\Query\Sort\SortInterface;
 
 /**
  * Class CriteriaQueryBuilder
+ *
  */
-final class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
+class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
 {
-    /** @var SortInterface[] */
-    private $sortedFields = [];
-
-    /** @var FilterInterface[] */
-    private $filters = [];
-
     /** @var Criteria */
     private $criteria;
 
@@ -35,6 +34,12 @@ final class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
     /** @var \Doctrine\ORM\QueryBuilder */
     private $qb;
 
+    /** @var HandlerInterface[]|AbstractHandler[] */
+    private $handlers;
+
+    /** @var bool */
+    private $applied = false;
+
     /**
      * @param EntityRepository $repository
      * @param array $filterParams
@@ -46,6 +51,10 @@ final class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
     {
         $this->qb = $repository->createQueryBuilder('e');
         $this->criteria = new Criteria();
+
+        $this->handlers[] = new CriteriaHandler($this->criteria);
+        $this->handlers[] = new QueryBuilderHandler($this->qb);
+
         $this->setFilterParams($filterParams);
         $this->setSortingFields($sortingFields);
     }
@@ -53,42 +62,84 @@ final class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
     /**
      * @param FilterInterface $filter
      *
-     * @return $this
+     * @return void
      */
-    public function addFilter(FilterInterface $filter)
+    public function addFilter(FilterInterface $filter): void
     {
-        $this->filters[] = $filter;
+        $supports = false;
 
-        return $this;
+        foreach ($this->handlers as $handler) {
+            if ($handler->supports($filter)) {
+                $supports = true;
+                $handler->addFilter($filter);
+            }
+        }
+
+        if (!$supports) {
+            throw new \RuntimeException('No available handler for this filter.');
+        }
+
+        $this->applied = false;
     }
 
     /**
      * @param SortInterface $sort
-     *
-     * @return $this
      */
-    public function addSorting(SortInterface $sort)
+    public function addSorting(SortInterface $sort): void
     {
-        $this->sortedFields[] = $sort;
+        $supports = false;
 
-        return $this;
+        foreach ($this->handlers as $handler) {
+            if ($handler->supports($sort)) {
+                $supports = true;
+                $handler->addSorting($sort);
+            }
+        }
+
+        if (!$supports) {
+            throw new \RuntimeException('No available handler for this sorting.');
+        }
+
+        $this->applied = false;
     }
 
     /**
      * @return \Doctrine\ORM\QueryBuilder
+     * @throws \Doctrine\ORM\Query\QueryException
      */
     public function getQb(): \Doctrine\ORM\QueryBuilder
     {
-        return (clone $this)->qb->addCriteria($this->buildCriteria());
+        $clone = clone $this;
+        $clone->apply();
+
+        return $clone->qb->addCriteria($clone->getCriteria());
+    }
+
+    /**
+     * It caused changes in qb and criteria
+     */
+    private function apply(): void
+    {
+        if ($this->applied) {
+            return;
+        }
+
+        if (0 === \count($this->sortingFields)) {
+            $this->criteria->orderBy($this->getDefaultOrder());
+        }
+
+        $this->applySorting();
+        $this->applyFilters();
+
+        $this->applied = true;
     }
 
     /**
      * @return Criteria
      */
-    private function buildCriteria(): Criteria
+    public function getCriteria(): Criteria
     {
-        $this->applyFilters();
-        $this->applySorting();
+        $this->apply();
 
         return $this->criteria;
     }
@@ -96,25 +147,17 @@ final class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
     private function applyFilters()
     {
         foreach ($this->filterParams as $field => $value) {
-            foreach ($this->filters as $filter) {
-                if ($filter->supports($field)) {
-                    $filter->apply($this->qb, $this->criteria, $value);
-                }
+            foreach ($this->handlers as $handler) {
+                $handler->filter($field, $value);
             }
         }
     }
 
     private function applySorting()
     {
-        if (0 === count($this->sortingFields)) {
-            $this->criteria->orderBy($this->getDefaultOrder());
-        }
-
         foreach ($this->sortingFields as $field => $order) {
-            foreach ($this->sortedFields as $sort) {
-                if ($sort->supports($field)) {
-                    $sort->apply($this->qb, $this->criteria, $order);
-                }
+            foreach ($this->handlers as $handler) {
+                $handler->sort($field, $order);
             }
         }
     }
@@ -130,7 +173,7 @@ final class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
     /**
      * @param array $defaultOrder
      */
-    public function setDefaultOrder(array $defaultOrder)
+    public function setDefaultOrder(array $defaultOrder): void
     {
         $this->defaultOrder = $defaultOrder;
     }
@@ -140,6 +183,8 @@ final class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
      */
     public function setFilterParams(array $filterParams)
     {
+        $this->applied = false;
+
         $this->filterParams = $filterParams;
     }
 
@@ -148,6 +193,8 @@ final class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
      */
     public function setSortingFields(array $sortingFields)
     {
+        $this->applied = false;
+        
         $this->sortingFields = $sortingFields;
     }
 }

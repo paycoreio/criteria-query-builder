@@ -5,17 +5,19 @@ declare(strict_types=1);
 namespace Paymaxi\Component\Query\Filter;
 
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\QueryBuilder;
+use Doctrine\Common\Collections\ExpressionBuilder;
 use Paymaxi\Component\Query\Operator\OperatorInterface;
 
-
 /**
- * Class DefaultFilter
+ * Class OperatorFilter
  *
  * @package Paymaxi\Component\Query\Filter
  */
-final class DefaultFilter extends AbstractFilter
+final class OperatorFilter extends AbstractFilter implements CriteriaFilterInterface
 {
+    /** @var ExpressionBuilder */
+    private static $expressionBuilder;
+    
     /** @var OperatorInterface[] */
     private $operators;
 
@@ -48,15 +50,35 @@ final class DefaultFilter extends AbstractFilter
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
+     * @param ExpressionBuilder $expressionBuilder
+     */
+    public static function setExpressionBuilder(ExpressionBuilder $expressionBuilder): void
+    {
+        self::$expressionBuilder = $expressionBuilder;
+    }
+
+    /**
+     * @return ExpressionBuilder
+     */
+    public function getExpressionBuilder(): ExpressionBuilder
+    {
+        if (null === static::$expressionBuilder) {
+            static::$expressionBuilder = new ExpressionBuilder();
+        }
+
+        return static::$expressionBuilder;
+    }
+
+    /**
      * @param Criteria $criteria
-     * @param $values
+     * @param array $values
      *
      * @return void
+     * @throws \Throwable
      */
-    public function apply(QueryBuilder $queryBuilder, Criteria $criteria, $values)
+    public function apply(Criteria $criteria, $values): void
     {
-        if (!is_array($values)) {
+        if (!\is_array($values)) {
             $this->thrower->invalidValueForField($this->getQueryField(), 'array');
         }
 
@@ -77,7 +99,7 @@ final class DefaultFilter extends AbstractFilter
 
             $criteriaOperator = $operator->getCriteriaOperator();
 
-            $exp = Criteria::expr();
+            $exp = $this->getExpressionBuilder();
 
             if (!method_exists($exp, $criteriaOperator)) {
                 throw new \RuntimeException(sprintf('Criteria operator %s does not exist.', $criteriaOperator));
@@ -89,14 +111,14 @@ final class DefaultFilter extends AbstractFilter
 
     /**
      * @param OperatorInterface $operator
-     * @param $value
+     * @param array|string|int|float $value
      *
      * @return bool|true
      */
     protected function validateWithOperator(OperatorInterface $operator, $value): bool
     {
         if (null !== $operator->getValidator()) {
-            return call_user_func($operator->getValidator(), $value);
+            return \call_user_func($operator->getValidator(), $value);
         }
 
         return parent::validate($value);

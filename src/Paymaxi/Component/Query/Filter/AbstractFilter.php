@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace Paymaxi\Component\Query\Filter;
 
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\QueryBuilder;
-use Paymaxi\Component\Query\Exception\Adapter\JsonApiExceptionThrowerAdapter;
+use Paymaxi\Component\Query\Exception\Adapter\JsonApiExceptionThrower;
 use Paymaxi\Component\Query\Exception\QueryExceptionThrowerInterface;
 use Paymaxi\Component\Query\Validator\ScalarValidator;
 use Paymaxi\Component\Query\Validator\ValidatorInterface;
-
 
 /**
  * Class AbstractFilter
@@ -52,7 +49,7 @@ abstract class AbstractFilter implements FilterInterface
         }
         
         $this->setValidator($validator);
-        $this->setThrower(new JsonApiExceptionThrowerAdapter());
+        $this->setThrower(new JsonApiExceptionThrower());
     }
 
     /**
@@ -90,15 +87,6 @@ abstract class AbstractFilter implements FilterInterface
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
-     * @param Criteria $criteria
-     * @param $value
-     *
-     * @return void
-     */
-    abstract public function apply(QueryBuilder $queryBuilder, Criteria $criteria, $value);
-
-    /**
      * @param QueryExceptionThrowerInterface $thrower
      */
     public function setThrower(QueryExceptionThrowerInterface $thrower)
@@ -107,7 +95,7 @@ abstract class AbstractFilter implements FilterInterface
     }
 
     /**
-     * @param $value
+     * @param mixed $value
      *
      * @return bool
      */

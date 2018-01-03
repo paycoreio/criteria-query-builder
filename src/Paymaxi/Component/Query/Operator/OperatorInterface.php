@@ -9,15 +9,15 @@ namespace Paymaxi\Component\Query\Operator;
  */
 interface OperatorInterface
 {
-    const OP_EQ = 'eq';
-    const OP_NEQ = 'neq';
-    const OP_GT = 'gt';
-    const OP_GTE = 'gte';
-    const OP_LT = 'lt';
-    const OP_LTE = 'lte';
-    const OP_IN = 'in';
-    const OP_NIN = 'notIn';
-    const OP_CONTAINS = 'contains';
+    public const OP_EQ = 'eq';
+    public const OP_NEQ = 'neq';
+    public const OP_GT = 'gt';
+    public const OP_GTE = 'gte';
+    public const OP_LT = 'lt';
+    public const OP_LTE = 'lte';
+    public const OP_IN = 'in';
+    public const OP_NIN = 'notIn';
+    public const OP_CONTAINS = 'contains';
 
     /**
      * @return string
@@ -32,10 +32,10 @@ interface OperatorInterface
     /**
      * @return callable|null
      */
-    public function getValidator();
+    public function getValidator(): ?callable;
 
     /**
-     * @param $value
+     * @param mixed $value
      *
      * @return mixed
      */

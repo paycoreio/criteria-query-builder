@@ -11,7 +11,9 @@
     "ramsey/uuid": "^3.5"
   },
   "require-dev": {
-    "phpunit/phpunit": "^6"
+    "phpunit/phpunit": "^6",
+    "friendsofphp/php-cs-fixer": "^2.8",
+    "phpstan/phpstan": "^0.9"
   },
   "autoload": {
     "psr-4": {

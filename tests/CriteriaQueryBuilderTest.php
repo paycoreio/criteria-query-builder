@@ -10,11 +10,13 @@ use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\Setup;
 use Paymaxi\Component\Query\CriteriaQueryBuilder;
-use Paymaxi\Component\Query\Filter\DefaultFilter;
+use Paymaxi\Component\Query\Filter\BooleanFilter;
+use Paymaxi\Component\Query\Filter\OperatorFilter;
 use Paymaxi\Component\Query\Filter\ScalarFilter;
 use Paymaxi\Component\Query\Operator\DateTimeOperator;
 use Paymaxi\Component\Query\Operator\OperatorInterface;
 use Paymaxi\Component\Query\Tests\Entity\Author;
+use Paymaxi\Component\Query\Tests\Entity\Book;
 use PHPUnit\Framework\TestCase;
 
 class CriteriaQueryBuilderTest extends TestCase
@@ -45,14 +47,47 @@ class CriteriaQueryBuilderTest extends TestCase
     {
         $qb = new CriteriaQueryBuilder($this->em->getRepository(Author::class));
 
-        $dateTimeFilter = new DefaultFilter('birth');
+        $dateTimeFilter = new OperatorFilter('birth');
         $dateTimeFilter->addOperator(new DateTimeOperator('from', OperatorInterface::OP_GTE));
         $dateTimeFilter->addOperator(new DateTimeOperator('to', OperatorInterface::OP_LTE));
 
         $qb->addFilter(new ScalarFilter('name'));
         $qb->addFilter($dateTimeFilter);
 
+        $qb->setDefaultOrder(['birth' => Criteria::DESC]);
+
         return $qb;
+    }
+
+    public function getBookQb()
+    {
+        $qb = new CriteriaQueryBuilder($this->em->getRepository(Book::class));
+
+        $qb->addFilter(new ScalarFilter('name'));
+        $qb->addFilter(new BooleanFilter('published', 'published', BooleanFilter::CAST_STRINGS));
+
+        return $qb;
+    }
+
+    /**
+     * @test
+     */
+    public function it_returns_criteria()
+    {
+        $qb = $this->getAuthorQb();
+
+        $criteria = $qb->getCriteria();
+
+        self::assertEmpty($criteria->getWhereExpression());
+        self::assertEquals(['birth' => 'DESC'], $criteria->getOrderings());
+
+        $qb->setFilterParams([
+            'birth' => ['from' => Carbon::now()->subDays(7)->format('U')]
+        ]);
+
+        $criteria = $qb->getCriteria();
+
+        self::assertNotEmpty($criteria->getWhereExpression());
     }
 
     /**
@@ -62,8 +97,10 @@ class CriteriaQueryBuilderTest extends TestCase
     {
         $this->expectException(QueryException::class);
         $this->expectExceptionMessageRegExp('@has no field or association named created$@');
+        $qb = $this->getAuthorQb();
+        $qb->setDefaultOrder([]);
 
-        $this->getAuthorQb()->getQb()->getQuery()->getSQL();
+        $qb->getQb()->getQuery()->getSQL();
     }
 
     /**
@@ -72,7 +109,6 @@ class CriteriaQueryBuilderTest extends TestCase
     public function it_returns_correct_sql_on_datetime()
     {
         $qb = $this->getAuthorQb();
-        $qb->setDefaultOrder(['birth' => Criteria::DESC]);
 
         $qb->setFilterParams([
             'birth' => ['from' => Carbon::now()->subDays(7)->format('U')]
@@ -84,5 +120,26 @@ class CriteriaQueryBuilderTest extends TestCase
             $query->getSQL()
         );
         $this->assertCount(1, $query->getParameters());
+    }
+
+    /**
+     * @test
+     */
+    public function it_returns_correct_sql_on_boolean()
+    {
+        $qb = $this->getBookQb();
+        $qb->setDefaultOrder(['name' => Criteria::DESC]);
+
+        $qb->setFilterParams([
+            'published' => 'yes'
+        ]);
+
+        $query = $qb->getQb()->getQuery();
+        $this->assertSame(
+            'SELECT b0_.name AS name_0, b0_.published AS published_1, b0_.id AS id_2 FROM Book b0_ WHERE b0_.published = ? ORDER BY b0_.name DESC',
+            $query->getSQL()
+        );
+        $this->assertCount(1, $query->getParameters());
+        $this->assertTrue($query->getParameter('published')->getValue());
     }
 }

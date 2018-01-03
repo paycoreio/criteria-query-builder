@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Paymaxi\Component\Query\Filter;
 
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
 
 /**
@@ -12,7 +11,7 @@ use Doctrine\ORM\QueryBuilder;
  *
  * @package Paymaxi\Component\Query\Filter
  */
-final class DynamicFilter extends AbstractFilter
+final class DynamicFilter extends AbstractFilter implements QueryBuilderFilterInterface
 {
     /** @var callable */
     private $dynamicFilter;
@@ -32,17 +31,17 @@ final class DynamicFilter extends AbstractFilter
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param Criteria $criteria
-     * @param $value
+     * @param mixed $value
      *
      * @return void
+     * @throws \Throwable
      */
-    public function apply(QueryBuilder $queryBuilder, Criteria $criteria, $value)
+    public function apply(QueryBuilder $queryBuilder, $value): void
     {
         if (!$this->validate($value)) {
             $this->thrower->invalidValueForKey($this->getQueryField());
         }
 
-        call_user_func($this->dynamicFilter, $queryBuilder, $value);
+        \call_user_func($this->dynamicFilter, $queryBuilder, $value);
     }
 }
