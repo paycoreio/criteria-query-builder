@@ -7,11 +7,10 @@ use Doctrine\ORM\QueryBuilder;
 
 /**
  * Class DynamicSorting
- * TODO: add final keyword after 0.4.0 release
  *
  * @package Paymaxi\Component\Query\Sort
  */
-/*final*/ class DynamicSorting extends AbstractSorting implements QueryBuilderSortInterface
+final class DynamicSorting extends AbstractSorting implements QueryBuilderSortInterface
 {
     /** @var callable */
     private $dynamicSorting;
