@@ -16,16 +16,16 @@ interface CriteriaQueryBuilderInterface
     /**
      * @param FilterInterface $filter
      *
-     * @return $this
+     * @return CriteriaQueryBuilderInterface
      */
-    public function addFilter(FilterInterface $filter);
+    public function addFilter(FilterInterface $filter): CriteriaQueryBuilderInterface;
 
     /**
      * @param SortInterface $sort
      *
-     * @return mixed
+     * @return CriteriaQueryBuilderInterface
      */
-    public function addSorting(SortInterface $sort);
+    public function addSorting(SortInterface $sort): CriteriaQueryBuilderInterface;
 
     /**
      * @return \Doctrine\ORM\QueryBuilder

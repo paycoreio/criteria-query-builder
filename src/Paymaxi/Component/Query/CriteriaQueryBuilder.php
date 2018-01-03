@@ -66,9 +66,9 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
     /**
      * @param FilterInterface $filter
      *
-     * @return void
+     * @return CriteriaQueryBuilderInterface
      */
-    public function addFilter(FilterInterface $filter): void
+    public function addFilter(FilterInterface $filter): CriteriaQueryBuilderInterface
     {
         $supports = false;
 
@@ -84,12 +84,16 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
         }
 
         $this->applied = false;
+
+        return $this;
     }
 
     /**
      * @param SortInterface $sort
+     *
+     * @return CriteriaQueryBuilderInterface
      */
-    public function addSorting(SortInterface $sort): void
+    public function addSorting(SortInterface $sort): CriteriaQueryBuilderInterface
     {
         $supports = false;
 
@@ -105,6 +109,8 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
         }
 
         $this->applied = false;
+
+        return $this;
     }
 
     /**
