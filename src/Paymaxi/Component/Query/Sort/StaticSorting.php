@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\Criteria;
  *
  * @package Paymaxi\Component\Query\Sort
  */
-final class StaticSorting extends Sorting implements CriteriaSortInterface
+final class StaticSorting extends AbstractSorting implements CriteriaSortInterface
 {
     /**
      * @param Criteria $criteria

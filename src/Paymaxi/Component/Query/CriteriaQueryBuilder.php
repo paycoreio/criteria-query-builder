@@ -52,11 +52,15 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
         $this->qb = $repository->createQueryBuilder('e');
         $this->criteria = new Criteria();
 
-        $this->handlers[] = new CriteriaHandler($this->criteria);
-        $this->handlers[] = new QueryBuilderHandler($this->qb);
-
+        $this->initDefaultHandlers();
         $this->setFilterParams($filterParams);
         $this->setSortingFields($sortingFields);
+    }
+
+    protected function initDefaultHandlers(): void
+    {
+        $this->handlers[] = new CriteriaHandler($this->criteria);
+        $this->handlers[] = new QueryBuilderHandler($this->qb);
     }
 
     /**

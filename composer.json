@@ -4,7 +4,6 @@
   "type": "project",
   "require": {
     "php": "^7.1",
-    "composer/composer": "^1.2",
     "doctrine/orm": "^2.5",
     "neomerx/json-api": "^1.0",
     "nesbot/carbon": "^1.21",

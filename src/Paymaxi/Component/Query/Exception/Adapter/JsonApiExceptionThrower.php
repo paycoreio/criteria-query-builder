@@ -10,7 +10,7 @@ use Paymaxi\Component\Query\Exception\QueryExceptionThrowerInterface;
 use Ramsey\Uuid\Uuid;
 
 /**
- * Class JsonApiExceptionThrowerAdapter
+ * Class JsonApiExceptionThrower
  *
  * @package Paymaxi\Component\Query\Exception
  */

@@ -10,10 +10,11 @@ use Paymaxi\Component\Query\Operator\OperatorInterface;
 
 /**
  * Class OperatorFilter
+ * TODO: add final keyword after 0.4.0 release
  *
  * @package Paymaxi\Component\Query\Filter
  */
-final class OperatorFilter extends AbstractFilter implements CriteriaFilterInterface
+/*final*/ class OperatorFilter extends AbstractFilter implements CriteriaFilterInterface
 {
     /** @var ExpressionBuilder */
     private static $expressionBuilder;
