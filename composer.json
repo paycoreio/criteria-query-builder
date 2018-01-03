@@ -28,12 +28,13 @@
     }
   },
   "scripts": {
-    "test": "./vendor/bin/phpunit"
+    "test": "./vendor/bin/phpunit",
+    "fix": "./vendor/bin/php-cs-fixer fix --config .php_cs.php",
+    "static": "./vendor/bin/phpstan analyze -c .phpstan.neon --level=1 src"
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "0.1.x-dev",
-      "dev-dev": "0.2.x-dev"
+      "dev-master": "0.2.x-dev"
     }
   },
   "prefer-stable": true
