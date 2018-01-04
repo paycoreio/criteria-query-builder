@@ -11,7 +11,7 @@ use Paymaxi\Component\Query\Sort\SortInterface;
  *
  * @package Paymaxi\Component\Query\Handler
  */
-abstract class AbstractHandler implements HandlerInterface
+abstract class AbstractHandler implements SortHandlerInterface, FilterHandlerInterface
 {
     /** @var SortInterface[] */
     protected $sortingFields = [];
@@ -22,7 +22,7 @@ abstract class AbstractHandler implements HandlerInterface
     /**
      * @param SortInterface $sort
      */
-    public function addSorting(SortInterface $sort)
+    public function addSorting(SortInterface $sort):void
     {
         $this->sortingFields[] = $sort;
     }
@@ -30,7 +30,7 @@ abstract class AbstractHandler implements HandlerInterface
     /**
      * @param FilterInterface $filter
      */
-    public function addFilter(FilterInterface $filter)
+    public function addFilter(FilterInterface $filter): void
     {
         $this->filteringFields[] = $filter;
     }

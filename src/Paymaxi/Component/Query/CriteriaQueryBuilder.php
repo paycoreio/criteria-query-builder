@@ -9,9 +9,12 @@ use Doctrine\ORM\EntityRepository;
 use Paymaxi\Component\Query\Filter\FilterInterface;
 use Paymaxi\Component\Query\Handler\AbstractHandler;
 use Paymaxi\Component\Query\Handler\CriteriaHandler;
+use Paymaxi\Component\Query\Handler\FilterHandlerInterface;
 use Paymaxi\Component\Query\Handler\HandlerInterface;
 use Paymaxi\Component\Query\Handler\QueryBuilderHandler;
+use Paymaxi\Component\Query\Handler\SortHandlerInterface;
 use Paymaxi\Component\Query\Sort\SortInterface;
+use Sylius\Component\Registry\ServiceRegistry;
 
 /**
  * Class CriteriaQueryBuilder
@@ -20,7 +23,10 @@ use Paymaxi\Component\Query\Sort\SortInterface;
 class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
 {
     /** @var Criteria */
-    private $criteria;
+    protected $criteria;
+
+    /** @var \Doctrine\ORM\QueryBuilder */
+    protected $qb;
 
     /** @var array */
     private $filterParams;
@@ -31,10 +37,7 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
     /** @var array */
     private $defaultOrder;
 
-    /** @var \Doctrine\ORM\QueryBuilder */
-    private $qb;
-
-    /** @var HandlerInterface[]|AbstractHandler[] */
+    /** @var ServiceRegistry|HandlerInterface[]|AbstractHandler[] */
     private $handlers;
 
     /** @var bool */
@@ -51,6 +54,7 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
     {
         $this->qb = $repository->createQueryBuilder('e');
         $this->criteria = new Criteria();
+        $this->handlers = new ServiceRegistry(HandlerInterface::class);
 
         $this->initDefaultHandlers();
         $this->setFilterParams($filterParams);
@@ -59,8 +63,8 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
 
     protected function initDefaultHandlers(): void
     {
-        $this->handlers[] = new CriteriaHandler($this->criteria);
-        $this->handlers[] = new QueryBuilderHandler($this->qb);
+        $this->handlers->register(CriteriaHandler::class, new CriteriaHandler($this->criteria));
+        $this->handlers->register(QueryBuilderHandler::class, new QueryBuilderHandler($this->qb));
     }
 
     /**
@@ -72,8 +76,9 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
     {
         $supports = false;
 
-        foreach ($this->handlers as $handler) {
-            if ($handler->supports($filter)) {
+        /** @var AbstractHandler $handler */
+        foreach ($this->handlers->all() as $handler) {
+            if ($handler instanceof FilterHandlerInterface && $handler->supports($filter)) {
                 $supports = true;
                 $handler->addFilter($filter);
             }
@@ -83,9 +88,14 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
             throw new \RuntimeException('No available handler for this filter.');
         }
 
-        $this->applied = false;
+        $this->resetApply();
 
         return $this;
+    }
+
+    protected function resetApply():void
+    {
+        $this->applied = false;
     }
 
     /**
@@ -97,8 +107,9 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
     {
         $supports = false;
 
-        foreach ($this->handlers as $handler) {
-            if ($handler->supports($sort)) {
+        /** @var AbstractHandler $handler */
+        foreach ($this->handlers->all() as $handler) {
+            if ($handler instanceof SortHandlerInterface && $handler->supports($sort)) {
                 $supports = true;
                 $handler->addSorting($sort);
             }
@@ -108,7 +119,7 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
             throw new \RuntimeException('No available handler for this sorting.');
         }
 
-        $this->applied = false;
+        $this->resetApply();
 
         return $this;
     }
@@ -128,7 +139,7 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
     /**
      * It caused changes in qb and criteria
      */
-    private function apply(): void
+    protected function apply(): void
     {
         if ($this->applied) {
             return;
@@ -157,8 +168,10 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
     private function applyFilters()
     {
         foreach ($this->filterParams as $field => $value) {
-            foreach ($this->handlers as $handler) {
-                $handler->filter($field, $value);
+            foreach ($this->handlers->all() as $handler) {
+                if ($handler instanceof FilterHandlerInterface) {
+                    $handler->filter($field, $value);
+                }
             }
         }
     }
@@ -166,8 +179,10 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
     private function applySorting()
     {
         foreach ($this->sortingFields as $field => $order) {
-            foreach ($this->handlers as $handler) {
-                $handler->sort($field, $order);
+            foreach ($this->handlers->all() as $handler) {
+                if ($handler instanceof SortHandlerInterface) {
+                    $handler->sort($field, $order);
+                }
             }
         }
     }
@@ -193,7 +208,7 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
      */
     public function setFilterParams(array $filterParams)
     {
-        $this->applied = false;
+        $this->resetApply();
 
         $this->filterParams = $filterParams;
     }
@@ -203,8 +218,25 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
      */
     public function setSortingFields(array $sortingFields)
     {
-        $this->applied = false;
+        $this->resetApply();
         
         $this->sortingFields = $sortingFields;
+    }
+
+    /**
+     * @return ServiceRegistry
+     */
+    public function getHandlers():ServiceRegistry
+    {
+        return $this->handlers;
+    }
+
+    /**
+     * @param string $identifier
+     * @param HandlerInterface $handler
+     */
+    public function addHandler(string $identifier, HandlerInterface $handler):void
+    {
+        $this->handlers->register($identifier, $handler);
     }
 }
