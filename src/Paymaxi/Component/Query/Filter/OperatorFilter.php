@@ -18,7 +18,7 @@ use Paymaxi\Component\Query\Operator\OperatorInterface;
 {
     /** @var ExpressionBuilder */
     private static $expressionBuilder;
-    
+
     /** @var OperatorInterface[] */
     private $operators;
 
@@ -63,11 +63,11 @@ use Paymaxi\Component\Query\Operator\OperatorInterface;
      */
     public function getExpressionBuilder(): ExpressionBuilder
     {
-        if (null === static::$expressionBuilder) {
-            static::$expressionBuilder = new ExpressionBuilder();
+        if (null === self::$expressionBuilder) {
+            self::$expressionBuilder = new ExpressionBuilder();
         }
 
-        return static::$expressionBuilder;
+        return self::$expressionBuilder;
     }
 
     /**
