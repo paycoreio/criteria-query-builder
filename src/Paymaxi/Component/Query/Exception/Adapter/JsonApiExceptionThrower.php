@@ -36,7 +36,7 @@ final class JsonApiExceptionThrower implements QueryExceptionThrowerInterface
             $uuid,
             null,
             'error',
-            400,
+            '400',
             $message
         );
 
