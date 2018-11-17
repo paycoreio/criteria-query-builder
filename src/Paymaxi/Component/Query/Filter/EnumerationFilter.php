@@ -9,7 +9,9 @@ use Paymaxi\Component\Query\Validator\Adapter\ArrayAdapter;
 use Paymaxi\Component\Query\Validator\ValidatorInterface;
 
 /**
- * Class EnumerationFilter.
+ * Class EnumerationFilter
+ *
+ * @package Paymaxi\Component\Query\Filter
  */
 final class EnumerationFilter extends AbstractFilter implements CriteriaFilterInterface
 {
@@ -32,23 +34,20 @@ final class EnumerationFilter extends AbstractFilter implements CriteriaFilterIn
     /**
      * @param ValidatorInterface $validator
      */
-    public function setValidator(ValidatorInterface $validator): void
+    public function setValidator(ValidatorInterface $validator)
     {
         parent::setValidator(new ArrayAdapter($validator));
     }
 
+
     /**
      * @param Criteria $criteria
-     * @param mixed    $value
+     * @param mixed $value
      *
      * @throws \Throwable
      */
     public function apply(Criteria $criteria, $value): void
     {
-        if (!\is_string($value)) {
-            $this->thrower->invalidValueForField($this->getQueryField(), 'string');
-        }
-
         $values = explode($this->delimiter, $value);
 
         if (!$this->validate($values)) {

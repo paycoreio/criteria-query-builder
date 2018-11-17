@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Paymaxi\Component\Query\Filter;
@@ -9,7 +8,9 @@ use Paymaxi\Component\Query\Validator\Adapter\ArrayAdapter;
 use Paymaxi\Component\Query\Validator\ValidatorInterface;
 
 /**
- * Class DynamicEnumerationFilter.
+ * Class DynamicEnumerationFilter
+ *
+ * @package Paymaxi\Component\Query\Filter
  */
 final class DynamicEnumerationFilter extends AbstractFilter implements QueryBuilderFilterInterface
 {
@@ -22,9 +23,9 @@ final class DynamicEnumerationFilter extends AbstractFilter implements QueryBuil
     /**
      * DynamicFilter constructor.
      *
-     * @param string   $queryField
+     * @param string $queryField
      * @param callable $dynamicFilter
-     * @param string   $delimiter
+     * @param string $delimiter
      */
     public function __construct(
         string $queryField,
@@ -40,23 +41,20 @@ final class DynamicEnumerationFilter extends AbstractFilter implements QueryBuil
     /**
      * @param ValidatorInterface $validator
      */
-    public function setValidator(ValidatorInterface $validator): void
+    public function setValidator(ValidatorInterface $validator)
     {
         parent::setValidator(new ArrayAdapter($validator));
     }
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param mixed        $value
+     * @param mixed $value
      *
+     * @return void
      * @throws \Throwable
      */
     public function apply(QueryBuilder $queryBuilder, $value): void
     {
-        if (!\is_string($value)) {
-            $this->thrower->invalidValueForField($this->getQueryField(), 'string');
-        }
-
         $values = explode($this->delimiter, $value);
 
         if (!$this->validate($values)) {
