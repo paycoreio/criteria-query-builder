@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Paymaxi\Component\Query\Sort;
 
 /**
- * Class Sorting
- *
- * @package Paymaxi\Component\Query\Sort
+ * Class Sorting.
  */
 abstract class AbstractSorting implements SortInterface
 {

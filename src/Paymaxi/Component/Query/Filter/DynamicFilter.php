@@ -7,9 +7,7 @@ namespace Paymaxi\Component\Query\Filter;
 use Doctrine\ORM\QueryBuilder;
 
 /**
- * Class DynamicFilter
- *
- * @package Paymaxi\Component\Query\Filter
+ * Class DynamicFilter.
  */
 final class DynamicFilter extends AbstractFilter implements QueryBuilderFilterInterface
 {
@@ -19,7 +17,7 @@ final class DynamicFilter extends AbstractFilter implements QueryBuilderFilterIn
     /**
      * DynamicFilter constructor.
      *
-     * @param string $queryField
+     * @param string   $queryField
      * @param callable $dynamicFilter
      */
     public function __construct(string $queryField, callable $dynamicFilter)
@@ -31,9 +29,8 @@ final class DynamicFilter extends AbstractFilter implements QueryBuilderFilterIn
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param mixed $value
+     * @param mixed        $value
      *
-     * @return void
      * @throws \Throwable
      */
     public function apply(QueryBuilder $queryBuilder, $value): void

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Paymaxi\Component\Query\Sort;
@@ -6,9 +7,7 @@ namespace Paymaxi\Component\Query\Sort;
 use Doctrine\ORM\QueryBuilder;
 
 /**
- * Class DynamicSorting
- *
- * @package Paymaxi\Component\Query\Sort
+ * Class DynamicSorting.
  */
 final class DynamicSorting extends AbstractSorting implements QueryBuilderSortInterface
 {
@@ -18,8 +17,8 @@ final class DynamicSorting extends AbstractSorting implements QueryBuilderSortIn
     /**
      * DynamicSorting constructor.
      *
-     * @param string $queryField
-     * @param string $fieldName
+     * @param string   $queryField
+     * @param string   $fieldName
      * @param callable $soring
      */
     public function __construct(string $queryField, string $fieldName, callable $soring)
@@ -28,12 +27,9 @@ final class DynamicSorting extends AbstractSorting implements QueryBuilderSortIn
         $this->dynamicSorting = $soring;
     }
 
-
     /**
      * @param QueryBuilder $queryBuilder
-     * @param string $orderField
-     *
-     * @return void
+     * @param string       $orderField
      */
     public function apply(QueryBuilder $queryBuilder, string $orderField): void
     {

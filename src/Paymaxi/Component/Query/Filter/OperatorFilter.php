@@ -10,9 +10,7 @@ use Paymaxi\Component\Query\Operator\OperatorInterface;
 
 /**
  * Class OperatorFilter
- * TODO: add final keyword after 0.4.0 release
- *
- * @package Paymaxi\Component\Query\Filter
+ * TODO: add final keyword after 0.4.0 release.
  */
 /*final*/ class OperatorFilter extends AbstractFilter implements CriteriaFilterInterface
 {
@@ -27,7 +25,7 @@ use Paymaxi\Component\Query\Operator\OperatorInterface;
      *
      * @param string $queryField
      * @param string $fieldName
-     * @param array $operators
+     * @param array  $operators
      */
     public function __construct(string $queryField, string $fieldName = null, array $operators = [])
     {
@@ -72,9 +70,8 @@ use Paymaxi\Component\Query\Operator\OperatorInterface;
 
     /**
      * @param Criteria $criteria
-     * @param array $values
+     * @param array    $values
      *
-     * @return void
      * @throws \Throwable
      */
     public function apply(Criteria $criteria, $values): void
@@ -111,7 +108,7 @@ use Paymaxi\Component\Query\Operator\OperatorInterface;
     }
 
     /**
-     * @param OperatorInterface $operator
+     * @param OperatorInterface      $operator
      * @param array|string|int|float $value
      *
      * @return bool|true

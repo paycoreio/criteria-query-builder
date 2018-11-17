@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Paymaxi\Component\Query\Handler;
@@ -6,9 +7,7 @@ namespace Paymaxi\Component\Query\Handler;
 use Paymaxi\Component\Query\Sort\SortInterface;
 
 /**
- * Interface SortHandlerInterface
- *
- * @package Paymaxi\Component\Query\Handler
+ * Interface SortHandlerInterface.
  */
 interface SortHandlerInterface extends HandlerInterface
 {

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Paymaxi\Component\Query\Filter;
@@ -6,15 +7,13 @@ namespace Paymaxi\Component\Query\Filter;
 use Doctrine\Common\Collections\Criteria;
 
 /**
- * Interface CriteriaFilterInterface
- *
- * @package Paymaxi\Component\Query\Filter
+ * Interface CriteriaFilterInterface.
  */
 interface CriteriaFilterInterface extends FilterInterface
 {
     /**
      * @param Criteria $criteria
-     * @param mixed $value
+     * @param mixed    $value
      */
     public function apply(Criteria $criteria, $value): void;
 }

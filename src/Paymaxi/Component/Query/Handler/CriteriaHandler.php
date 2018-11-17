@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Paymaxi\Component\Query\Handler;
@@ -10,9 +11,7 @@ use Paymaxi\Component\Query\Sort\CriteriaSortInterface;
 use Paymaxi\Component\Query\Sort\SortInterface;
 
 /**
- * Class CriteriaHandler
- *
- * @package Paymaxi\Component\Query\Handler
+ * Class CriteriaHandler.
  */
 final class CriteriaHandler extends AbstractHandler
 {
@@ -41,18 +40,18 @@ final class CriteriaHandler extends AbstractHandler
 
     /**
      * @param CriteriaSortInterface|SortInterface $sort
-     * @param string $order
+     * @param string                              $order
      */
-    protected function handleSorting(SortInterface $sort, string $order):void
+    protected function handleSorting(SortInterface $sort, string $order): void
     {
         $sort->apply($this->criteria, $order);
     }
 
     /**
      * @param FilterInterface|CriteriaFilterInterface $filter
-     * @param mixed $value
+     * @param mixed                                   $value
      */
-    protected function handleFiltering(FilterInterface $filter, $value):void
+    protected function handleFiltering(FilterInterface $filter, $value): void
     {
         $filter->apply($this->criteria, $value);
     }

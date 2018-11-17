@@ -1,15 +1,13 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace Paymaxi\Component\Query\Validator\Adapter;
 
 use Paymaxi\Component\Query\Validator\ValidatorInterface;
 
 /**
- * Class CallableAdapter
- *
- * @package Paymaxi\Component\Query\Validator\Adapter
+ * Class CallableAdapter.
  */
 final class CallableAdapter implements ValidatorInterface
 {

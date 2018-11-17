@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace Paymaxi\Component\Query\Exception\Adapter;
 
@@ -10,13 +10,10 @@ use Paymaxi\Component\Query\Exception\QueryExceptionThrowerInterface;
 use Ramsey\Uuid\Uuid;
 
 /**
- * Class JsonApiExceptionThrower
- *
- * @package Paymaxi\Component\Query\Exception
+ * Class JsonApiExceptionThrower.
  */
 final class JsonApiExceptionThrower implements QueryExceptionThrowerInterface
 {
-
     /**
      * @param string $key
      */
@@ -28,7 +25,7 @@ final class JsonApiExceptionThrower implements QueryExceptionThrowerInterface
     /**
      * @param string $message
      */
-    private function throwException(string $message)
+    private function throwException(string $message): void
     {
         $uuid = Uuid::getFactory()->uuid4()->toString();
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Paymaxi\Component\Query\Filter;
 
 /**
- * Interface FilterInterface
+ * Interface FilterInterface.
  */
 interface FilterInterface
 {

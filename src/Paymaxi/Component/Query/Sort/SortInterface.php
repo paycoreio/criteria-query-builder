@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Paymaxi\Component\Query\Sort;
 
 /**
- * Interface SortInterface
- *
- * @package Paymaxi\Component\Query\Sort
+ * Interface SortInterface.
  */
 interface SortInterface
 {

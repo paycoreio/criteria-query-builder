@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Paymaxi\Component\Query\Operator;
 
 /**
- * Class Operator
+ * Class Operator.
  */
 class Operator implements OperatorInterface
 {
@@ -24,8 +24,8 @@ class Operator implements OperatorInterface
     /**
      * Operator constructor.
      *
-     * @param string $queryOperator
-     * @param string $criteriaOperator
+     * @param string   $queryOperator
+     * @param string   $criteriaOperator
      * @param callable $validator
      * @param callable $normalizer
      */

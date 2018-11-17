@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Paymaxi\Component\Query\Handler;
@@ -10,15 +11,13 @@ use Paymaxi\Component\Query\Sort\QueryBuilderSortInterface;
 use Paymaxi\Component\Query\Sort\SortInterface;
 
 /**
- * Class QueryBuilderHandler
- *
- * @package Paymaxi\Component\Query\Handler
+ * Class QueryBuilderHandler.
  */
 final class QueryBuilderHandler extends AbstractHandler
 {
     /** @var QueryBuilder */
     private $queryBuilder;
-    
+
     /**
      * QueryBuilderHandler constructor.
      *
@@ -34,25 +33,25 @@ final class QueryBuilderHandler extends AbstractHandler
      *
      * @return bool
      */
-    public function supports($object):bool
+    public function supports($object): bool
     {
         return $object instanceof QueryBuilderSortInterface || $object instanceof QueryBuilderFilterInterface;
     }
 
     /**
      * @param QueryBuilderSortInterface|SortInterface $sort
-     * @param string $order
+     * @param string                                  $order
      */
-    protected function handleSorting(SortInterface $sort, string $order)  :void
+    protected function handleSorting(SortInterface $sort, string $order): void
     {
         $sort->apply($this->queryBuilder, $order);
     }
 
     /**
      * @param FilterInterface|QueryBuilderFilterInterface $filter
-     * @param mixed $value
+     * @param mixed                                       $value
      */
-    protected function handleFiltering(FilterInterface $filter, $value)    :void
+    protected function handleFiltering(FilterInterface $filter, $value): void
     {
         $filter->apply($this->queryBuilder, $value);
     }
