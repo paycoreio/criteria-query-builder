@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Paymaxi\Component\Query\Operator;
 
 /**
- * Class Operator.
+ * Class Operator
  */
 interface OperatorInterface
 {

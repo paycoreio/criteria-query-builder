@@ -1,11 +1,13 @@
 <?php
-
 declare(strict_types=1);
+
 
 namespace Paymaxi\Component\Query\Validator;
 
 /**
- * Class DummyValidator.
+ * Class DummyValidator
+ *
+ * @package Paymaxi\Component\Query\Validator
  */
 final class DummyValidator implements ValidatorInterface
 {

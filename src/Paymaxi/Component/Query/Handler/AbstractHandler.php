@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Paymaxi\Component\Query\Handler;
@@ -8,7 +7,9 @@ use Paymaxi\Component\Query\Filter\FilterInterface;
 use Paymaxi\Component\Query\Sort\SortInterface;
 
 /**
- * Class AbstractHandler.
+ * Class AbstractHandler
+ *
+ * @package Paymaxi\Component\Query\Handler
  */
 abstract class AbstractHandler implements SortHandlerInterface, FilterHandlerInterface
 {
@@ -21,7 +22,7 @@ abstract class AbstractHandler implements SortHandlerInterface, FilterHandlerInt
     /**
      * @param SortInterface $sort
      */
-    public function addSorting(SortInterface $sort): void
+    public function addSorting(SortInterface $sort):void
     {
         $this->sortingFields[] = $sort;
     }
@@ -36,13 +37,13 @@ abstract class AbstractHandler implements SortHandlerInterface, FilterHandlerInt
 
     /**
      * @param SortInterface $sort
-     * @param string        $order
+     * @param string $order
      */
     abstract protected function handleSorting(SortInterface $sort, string $order): void;
 
     /**
      * @param FilterInterface $filter
-     * @param mixed           $value
+     * @param mixed $value
      */
     abstract protected function handleFiltering(FilterInterface $filter, $value): void;
 
@@ -62,7 +63,7 @@ abstract class AbstractHandler implements SortHandlerInterface, FilterHandlerInt
 
     /**
      * @param string $field
-     * @param mixed  $value
+     * @param mixed $value
      */
     public function filter(string $field, $value): void
     {

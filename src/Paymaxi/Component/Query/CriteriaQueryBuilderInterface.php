@@ -9,7 +9,7 @@ use Paymaxi\Component\Query\Filter\FilterInterface;
 use Paymaxi\Component\Query\Sort\SortInterface;
 
 /**
- * Class CriteriaQueryBuilder.
+ * Class CriteriaQueryBuilder
  */
 interface CriteriaQueryBuilderInterface
 {
@@ -18,14 +18,14 @@ interface CriteriaQueryBuilderInterface
      *
      * @return CriteriaQueryBuilderInterface
      */
-    public function addFilter(FilterInterface $filter): self;
+    public function addFilter(FilterInterface $filter): CriteriaQueryBuilderInterface;
 
     /**
      * @param SortInterface $sort
      *
      * @return CriteriaQueryBuilderInterface
      */
-    public function addSorting(SortInterface $sort): self;
+    public function addSorting(SortInterface $sort): CriteriaQueryBuilderInterface;
 
     /**
      * @return \Doctrine\ORM\QueryBuilder
@@ -34,6 +34,8 @@ interface CriteriaQueryBuilderInterface
 
     /**
      * @param array $defaultOrder
+     *
+     * @return void
      */
     public function setDefaultOrder(array $defaultOrder): void;
 

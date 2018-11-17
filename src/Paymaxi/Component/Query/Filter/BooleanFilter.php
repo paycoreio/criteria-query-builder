@@ -8,7 +8,9 @@ use Doctrine\Common\Collections\Criteria;
 use Paymaxi\Component\Query\Validator\Adapter\CallableAdapter;
 
 /**
- * Class BooleanFilter.
+ * Class BooleanFilter
+ *
+ * @package Paymaxi\Component\Query\Filter
  */
 final class BooleanFilter extends AbstractFilter implements CriteriaFilterInterface
 {
@@ -22,9 +24,9 @@ final class BooleanFilter extends AbstractFilter implements CriteriaFilterInterf
     /**
      * BooleanFilter constructor.
      *
-     * @param string      $queryField
+     * @param string $queryField
      * @param string|null $fieldName
-     * @param int         $options
+     * @param int $options
      */
     public function __construct(
         string $queryField,
@@ -42,20 +44,21 @@ final class BooleanFilter extends AbstractFilter implements CriteriaFilterInterf
 
     /**
      * @param Criteria $criteria
-     * @param mixed    $value
+     * @param mixed $value
      *
+     * @return void
      * @throws \Throwable
      */
     public function apply(Criteria $criteria, $value): void
     {
         if (\is_string($value)) {
-            $value = mb_strtolower($value);
+            $value = strtolower($value);
 
-            if ($this->options & self::CAST_NUMERIC_STRINGS && ('1' === $value || '0' === $value)) {
+            if ($this->options & self::CAST_NUMERIC_STRINGS && ($value === '1' || $value === '0')) {
                 $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
-            } elseif ($this->options & self::CAST_BOOLEAN_STRINGS && ('true' === $value || 'false' === $value)) {
+            } elseif ($this->options & self::CAST_BOOLEAN_STRINGS && ($value === 'true' || $value === 'false')) {
                 $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
-            } elseif ($this->options & self::CAST_STRINGS && ('yes' === $value || 'no' === $value)) {
+            } elseif ($this->options & self::CAST_STRINGS && ($value === 'yes' || $value === 'no')) {
                 $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
             }
         }

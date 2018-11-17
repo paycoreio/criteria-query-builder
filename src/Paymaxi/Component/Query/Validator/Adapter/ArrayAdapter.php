@@ -1,13 +1,15 @@
 <?php
-
 declare(strict_types=1);
+
 
 namespace Paymaxi\Component\Query\Validator\Adapter;
 
 use Paymaxi\Component\Query\Validator\ValidatorInterface;
 
 /**
- * Class ArrayAdapter.
+ * Class ArrayAdapter
+ *
+ * @package Paymaxi\Component\Query\Validator\Adapter
  */
 final class ArrayAdapter implements ValidatorInterface
 {

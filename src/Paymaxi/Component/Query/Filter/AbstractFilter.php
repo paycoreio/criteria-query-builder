@@ -10,7 +10,9 @@ use Paymaxi\Component\Query\Validator\ScalarValidator;
 use Paymaxi\Component\Query\Validator\ValidatorInterface;
 
 /**
- * Class AbstractFilter.
+ * Class AbstractFilter
+ *
+ * @package Paymaxi\Component\Query\Filter
  */
 abstract class AbstractFilter implements FilterInterface
 {
@@ -29,8 +31,8 @@ abstract class AbstractFilter implements FilterInterface
     /**
      * AbstractFilter constructor.
      *
-     * @param string             $queryField
-     * @param string             $fieldName
+     * @param string $queryField
+     * @param string $fieldName
      * @param ValidatorInterface $validator
      */
     public function __construct(string $queryField, string $fieldName = null, ValidatorInterface $validator = null)
@@ -38,14 +40,14 @@ abstract class AbstractFilter implements FilterInterface
         if (null === $fieldName) {
             $fieldName = $queryField;
         }
-
+        
         $this->fieldName = $fieldName;
         $this->queryField = $queryField;
 
         if (null === $validator) {
             $validator = new ScalarValidator();
         }
-
+        
         $this->setValidator($validator);
         $this->setThrower(new JsonApiExceptionThrower());
     }
@@ -53,7 +55,7 @@ abstract class AbstractFilter implements FilterInterface
     /**
      * @param ValidatorInterface $validator
      */
-    public function setValidator(ValidatorInterface $validator): void
+    public function setValidator(ValidatorInterface $validator)
     {
         $this->validator = $validator;
     }
@@ -87,7 +89,7 @@ abstract class AbstractFilter implements FilterInterface
     /**
      * @param QueryExceptionThrowerInterface $thrower
      */
-    public function setThrower(QueryExceptionThrowerInterface $thrower): void
+    public function setThrower(QueryExceptionThrowerInterface $thrower)
     {
         $this->thrower = $thrower;
     }

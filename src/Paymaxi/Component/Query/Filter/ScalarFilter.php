@@ -7,14 +7,17 @@ namespace Paymaxi\Component\Query\Filter;
 use Doctrine\Common\Collections\Criteria;
 
 /**
- * Class ScalarFilter.
+ * Class ScalarFilter
+ *
+ * @package Paymaxi\Component\Query\Filter
  */
 final class ScalarFilter extends AbstractFilter implements CriteriaFilterInterface
 {
     /**
      * @param Criteria $criteria
-     * @param mixed    $value
+     * @param mixed $value
      *
+     * @return void
      * @throws \Throwable
      */
     public function apply(Criteria $criteria, $value): void

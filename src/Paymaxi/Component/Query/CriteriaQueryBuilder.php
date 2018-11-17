@@ -17,7 +17,8 @@ use Paymaxi\Component\Query\Sort\SortInterface;
 use Sylius\Component\Registry\ServiceRegistry;
 
 /**
- * Class CriteriaQueryBuilder.
+ * Class CriteriaQueryBuilder
+ *
  */
 class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
 {
@@ -44,8 +45,8 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
 
     /**
      * @param EntityRepository $repository
-     * @param array            $filterParams
-     * @param array            $sortingFields
+     * @param array $filterParams
+     * @param array $sortingFields
      *
      * @internal param ApiManagerInterface $manager
      */
@@ -92,7 +93,7 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
         return $this;
     }
 
-    protected function resetApply(): void
+    protected function resetApply():void
     {
         $this->applied = false;
     }
@@ -125,7 +126,6 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
 
     /**
      * @return \Doctrine\ORM\QueryBuilder
-     *
      * @throws \Doctrine\ORM\Query\QueryException
      */
     public function getQb(): \Doctrine\ORM\QueryBuilder
@@ -133,24 +133,20 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
         $clone = clone $this;
         $clone->apply();
 
-        $qb = $clone->qb->addCriteria($clone->getCriteria());
-
-        if (0 === \count($this->sortingFields)) {
-            foreach ($this->getDefaultOrder() as $field => $order) {
-                $qb->addOrderBy($field, $order);
-            }
-        }
-
-        return $qb;
+        return $clone->qb->addCriteria($clone->getCriteria());
     }
 
     /**
-     * It caused changes in qb and criteria.
+     * It caused changes in qb and criteria
      */
     protected function apply(): void
     {
         if ($this->applied) {
             return;
+        }
+
+        if (0 === \count($this->sortingFields)) {
+            $this->criteria->orderBy($this->getDefaultOrder());
         }
 
         $this->applySorting();
@@ -169,7 +165,7 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
         return $this->criteria;
     }
 
-    private function applyFilters(): void
+    private function applyFilters()
     {
         foreach ($this->filterParams as $field => $value) {
             foreach ($this->handlers->all() as $handler) {
@@ -180,7 +176,7 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
         }
     }
 
-    private function applySorting(): void
+    private function applySorting()
     {
         foreach ($this->sortingFields as $field => $order) {
             foreach ($this->handlers->all() as $handler) {
@@ -210,7 +206,7 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
     /**
      * @param array $filterParams
      */
-    public function setFilterParams(array $filterParams): void
+    public function setFilterParams(array $filterParams)
     {
         $this->resetApply();
 
@@ -220,26 +216,26 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
     /**
      * @param array $sortingFields
      */
-    public function setSortingFields(array $sortingFields): void
+    public function setSortingFields(array $sortingFields)
     {
         $this->resetApply();
-
+        
         $this->sortingFields = $sortingFields;
     }
 
     /**
      * @return ServiceRegistry
      */
-    public function getHandlers(): ServiceRegistry
+    public function getHandlers():ServiceRegistry
     {
         return $this->handlers;
     }
 
     /**
-     * @param string           $identifier
+     * @param string $identifier
      * @param HandlerInterface $handler
      */
-    public function addHandler(string $identifier, HandlerInterface $handler): void
+    public function addHandler(string $identifier, HandlerInterface $handler):void
     {
         $this->handlers->register($identifier, $handler);
     }

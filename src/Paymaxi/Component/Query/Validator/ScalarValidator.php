@@ -1,11 +1,12 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Paymaxi\Component\Query\Validator;
 
 /**
- * Class ScalarValidator.
+ * Class ScalarValidator
+ *
+ * @package Paymaxi\Component\Query\Validator
  */
 final class ScalarValidator implements ValidatorInterface
 {
