@@ -39,13 +39,13 @@ class Operator implements OperatorInterface
         $this->criteriaOperator = $criteriaOperator;
         $this->validator = $validator;
 
-        if (null !== $normalizer) {
-            $this->normalizer = $normalizer;
-        } else {
-            $this->normalizer = function ($value) {
+        if (null === $normalizer) {
+            $normalizer = function ($value) {
                 return $value;
             };
         }
+        
+        $this->normalizer = $normalizer;
     }
 
     /**

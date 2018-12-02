@@ -16,5 +16,5 @@ interface CriteriaFilterInterface extends FilterInterface
      * @param Criteria $criteria
      * @param mixed $value
      */
-    public function apply(Criteria $criteria, $value): void;
+    public function applyCriteria(Criteria $criteria, $value): void;
 }

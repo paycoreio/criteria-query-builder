@@ -35,7 +35,7 @@ final class DynamicSorting extends AbstractSorting implements QueryBuilderSortIn
      *
      * @return void
      */
-    public function apply(QueryBuilder $queryBuilder, string $orderField): void
+    public function applyQueryBuilder(QueryBuilder $queryBuilder, string $orderField): void
     {
         \call_user_func($this->dynamicSorting, $queryBuilder);
     }

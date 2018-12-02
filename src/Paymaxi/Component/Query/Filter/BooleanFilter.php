@@ -49,7 +49,7 @@ final class BooleanFilter extends AbstractFilter implements CriteriaFilterInterf
      * @return void
      * @throws \Throwable
      */
-    public function apply(Criteria $criteria, $value): void
+    public function applyCriteria(Criteria $criteria, $value): void
     {
         if (\is_string($value)) {
             $value = strtolower($value);

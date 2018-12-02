@@ -45,7 +45,7 @@ final class QueryBuilderHandler extends AbstractHandler
      */
     protected function handleSorting(SortInterface $sort, string $order)  :void
     {
-        $sort->apply($this->queryBuilder, $order);
+        $sort->applyQueryBuilder($this->queryBuilder, $order);
     }
 
     /**
@@ -54,6 +54,6 @@ final class QueryBuilderHandler extends AbstractHandler
      */
     protected function handleFiltering(FilterInterface $filter, $value)    :void
     {
-        $filter->apply($this->queryBuilder, $value);
+        $filter->applyQueryBuilder($this->queryBuilder, $value);
     }
 }

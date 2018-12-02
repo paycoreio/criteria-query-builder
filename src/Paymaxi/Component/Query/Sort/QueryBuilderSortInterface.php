@@ -16,5 +16,5 @@ interface QueryBuilderSortInterface extends SortInterface
      * @param QueryBuilder $queryBuilder
      * @param string $orderField
      */
-    public function apply(QueryBuilder $queryBuilder, string $orderField): void;
+    public function applyQueryBuilder(QueryBuilder $queryBuilder, string $orderField): void;
 }

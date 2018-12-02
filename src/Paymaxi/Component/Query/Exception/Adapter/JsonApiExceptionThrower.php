@@ -19,6 +19,8 @@ final class JsonApiExceptionThrower implements QueryExceptionThrowerInterface
 
     /**
      * @param string $key
+     *
+     * @throws \Exception
      */
     public function invalidValueForKey(string $key): void
     {
@@ -27,8 +29,10 @@ final class JsonApiExceptionThrower implements QueryExceptionThrowerInterface
 
     /**
      * @param string $message
+     *
+     * @throws \Exception
      */
-    private function throwException(string $message)
+    private function throwException(string $message): void
     {
         $uuid = Uuid::getFactory()->uuid4()->toString();
 
@@ -45,6 +49,8 @@ final class JsonApiExceptionThrower implements QueryExceptionThrowerInterface
 
     /**
      * @param string $operator
+     *
+     * @throws \Exception
      */
     public function operatorIsNotDefined(string $operator): void
     {
@@ -53,6 +59,8 @@ final class JsonApiExceptionThrower implements QueryExceptionThrowerInterface
 
     /**
      * @param string $operator
+     *
+     * @throws \Exception
      */
     public function invalidValueForOperator(string $operator): void
     {

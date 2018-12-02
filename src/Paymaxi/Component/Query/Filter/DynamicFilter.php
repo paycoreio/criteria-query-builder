@@ -36,7 +36,7 @@ final class DynamicFilter extends AbstractFilter implements QueryBuilderFilterIn
      * @return void
      * @throws \Throwable
      */
-    public function apply(QueryBuilder $queryBuilder, $value): void
+    public function applyQueryBuilder(QueryBuilder $queryBuilder, $value): void
     {
         if (!$this->validate($value)) {
             $this->thrower->invalidValueForKey($this->getQueryField());

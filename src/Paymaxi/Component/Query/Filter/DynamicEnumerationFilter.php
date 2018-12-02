@@ -53,9 +53,19 @@ final class DynamicEnumerationFilter extends AbstractFilter implements QueryBuil
      * @return void
      * @throws \Throwable
      */
-    public function apply(QueryBuilder $queryBuilder, $value): void
+    public function applyQueryBuilder(QueryBuilder $queryBuilder, $value): void
     {
-        $values = explode($this->delimiter, $value);
+        if (!\is_string($value) && !\is_array($value)) {
+            $this->thrower->invalidValueForKey($this->getQueryField());
+        }
+
+        if (\is_string($value)) {
+            $values = explode($this->delimiter, $value);
+        }
+
+        if (\is_array($value)) {
+            $values = $value;
+        }
 
         if (!$this->validate($values)) {
             $this->thrower->invalidValueForKey($this->getQueryField());
