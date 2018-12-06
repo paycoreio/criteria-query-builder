@@ -16,5 +16,5 @@ interface QueryBuilderFilterInterface extends FilterInterface
      * @param QueryBuilder $queryBuilder
      * @param mixed $value
      */
-    public function apply(QueryBuilder $queryBuilder, $value): void;
+    public function applyQueryBuilder(QueryBuilder $queryBuilder, $value): void;
 }

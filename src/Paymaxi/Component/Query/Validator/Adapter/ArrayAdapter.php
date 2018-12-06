@@ -16,6 +16,9 @@ final class ArrayAdapter implements ValidatorInterface
     /** @var ValidatorInterface */
     private $validator;
 
+    /** @var bool */
+    private $strictUniqueControl = true;
+
     /**
      * ArrayAdapter constructor.
      *
@@ -37,6 +40,10 @@ final class ArrayAdapter implements ValidatorInterface
             return false;
         }
 
+        if ($this->isStrictUniqueControl() && \count($value) > \count(\array_unique($value))) {
+            return false;
+        }
+
         foreach ($value as $item) {
             if (!$this->validator->validate($item)) {
                 return false;
@@ -44,5 +51,21 @@ final class ArrayAdapter implements ValidatorInterface
         }
 
         return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isStrictUniqueControl(): bool
+    {
+        return $this->strictUniqueControl;
+    }
+
+    /**
+     * @param bool $strictUniqueControl
+     */
+    public function setStrictUniqueControl(bool $strictUniqueControl): void
+    {
+        $this->strictUniqueControl = $strictUniqueControl;
     }
 }

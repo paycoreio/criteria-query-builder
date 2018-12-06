@@ -45,7 +45,7 @@ final class CriteriaHandler extends AbstractHandler
      */
     protected function handleSorting(SortInterface $sort, string $order):void
     {
-        $sort->apply($this->criteria, $order);
+        $sort->applyCriteria($this->criteria, $order);
     }
 
     /**
@@ -54,6 +54,6 @@ final class CriteriaHandler extends AbstractHandler
      */
     protected function handleFiltering(FilterInterface $filter, $value):void
     {
-        $filter->apply($this->criteria, $value);
+        $filter->applyCriteria($this->criteria, $value);
     }
 }

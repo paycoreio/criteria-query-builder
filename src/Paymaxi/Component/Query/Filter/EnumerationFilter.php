@@ -46,9 +46,17 @@ final class EnumerationFilter extends AbstractFilter implements CriteriaFilterIn
      *
      * @throws \Throwable
      */
-    public function apply(Criteria $criteria, $value): void
+    public function applyCriteria(Criteria $criteria, $value): void
     {
-        $values = explode($this->delimiter, $value);
+        $values = $value;
+
+        if (!\is_string($value) && !\is_array($value)) {
+            $this->thrower->invalidValueForKey($this->getQueryField());
+        }
+
+        if (\is_string($value)) {
+            $values = explode($this->delimiter, $value);
+        }
 
         if (!$this->validate($values)) {
             $this->thrower->invalidValueForKey($this->getQueryField());

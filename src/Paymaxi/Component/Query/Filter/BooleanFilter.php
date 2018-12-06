@@ -18,6 +18,8 @@ final class BooleanFilter extends AbstractFilter implements CriteriaFilterInterf
     public const CAST_BOOLEAN_STRINGS = 2;
     public const CAST_STRINGS = 4;
 
+    public const CAST_ALL = self::CAST_BOOLEAN_STRINGS | self::CAST_NUMERIC_STRINGS | self::CAST_STRINGS;
+
     /** @var int */
     private $options;
 
@@ -49,7 +51,7 @@ final class BooleanFilter extends AbstractFilter implements CriteriaFilterInterf
      * @return void
      * @throws \Throwable
      */
-    public function apply(Criteria $criteria, $value): void
+    public function applyCriteria(Criteria $criteria, $value): void
     {
         if (\is_string($value)) {
             $value = strtolower($value);

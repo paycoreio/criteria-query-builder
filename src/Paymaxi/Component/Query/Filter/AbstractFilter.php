@@ -89,7 +89,7 @@ abstract class AbstractFilter implements FilterInterface
     /**
      * @param QueryExceptionThrowerInterface $thrower
      */
-    public function setThrower(QueryExceptionThrowerInterface $thrower)
+    public function setThrower(QueryExceptionThrowerInterface $thrower): void
     {
         $this->thrower = $thrower;
     }

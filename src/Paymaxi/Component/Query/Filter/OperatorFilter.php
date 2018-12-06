@@ -10,11 +10,10 @@ use Paymaxi\Component\Query\Operator\OperatorInterface;
 
 /**
  * Class OperatorFilter
- * TODO: add final keyword after 0.4.0 release
  *
  * @package Paymaxi\Component\Query\Filter
  */
-/*final*/ class OperatorFilter extends AbstractFilter implements CriteriaFilterInterface
+final class OperatorFilter extends AbstractFilter implements CriteriaFilterInterface
 {
     /** @var ExpressionBuilder */
     private static $expressionBuilder;
@@ -77,7 +76,7 @@ use Paymaxi\Component\Query\Operator\OperatorInterface;
      * @return void
      * @throws \Throwable
      */
-    public function apply(Criteria $criteria, $values): void
+    public function applyCriteria(Criteria $criteria, $values): void
     {
         if (!\is_array($values)) {
             $this->thrower->invalidValueForField($this->getQueryField(), 'array');
@@ -114,7 +113,7 @@ use Paymaxi\Component\Query\Operator\OperatorInterface;
      * @param OperatorInterface $operator
      * @param array|string|int|float $value
      *
-     * @return bool|true
+     * @return bool
      */
     protected function validateWithOperator(OperatorInterface $operator, $value): bool
     {
@@ -122,6 +121,6 @@ use Paymaxi\Component\Query\Operator\OperatorInterface;
             return \call_user_func($operator->getValidator(), $value);
         }
 
-        return parent::validate($value);
+        return $this->validate($value);
     }
 }

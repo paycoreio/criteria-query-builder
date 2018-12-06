@@ -20,7 +20,7 @@ final class ScalarFilter extends AbstractFilter implements CriteriaFilterInterfa
      * @return void
      * @throws \Throwable
      */
-    public function apply(Criteria $criteria, $value): void
+    public function applyCriteria(Criteria $criteria, $value): void
     {
         if (!$this->validate($value)) {
             $this->thrower->invalidValueForKey($this->getFieldName());

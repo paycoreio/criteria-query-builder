@@ -18,12 +18,22 @@ final class DateTimeOperator extends Operator
      *
      * @param string $queryOperator
      * @param string $criteriaOperator
-     * @param callable $validator
+     * @param string $format
      */
-    public function __construct(string $queryOperator, string $criteriaOperator, callable $validator = null)
+    public function __construct(string $queryOperator, string $criteriaOperator, string $format = 'U')
     {
-        $normalizer = function ($value) {
-            return Carbon::createFromTimestampUTC($value);
+        $normalizer = function ($value) use ($format) {
+            return Carbon::createFromFormat($format, $value);
+        };
+
+        $validator = function ($value) use ($format) {
+            try {
+                Carbon::createFromFormat($format, $value);
+            } catch (\Throwable $exception) {
+                return false;
+            }
+
+            return true;
         };
 
         parent::__construct($queryOperator, $criteriaOperator, $validator, $normalizer);
