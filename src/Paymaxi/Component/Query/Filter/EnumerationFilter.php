@@ -50,7 +50,7 @@ final class EnumerationFilter extends AbstractFilter implements CriteriaFilterIn
     {
         $values = $value;
 
-        if (!\is_string($value) || \is_array($value)) {
+        if (!\is_string($value) && !\is_array($value)) {
             $this->thrower->invalidValueForKey($this->getQueryField());
         }
 
