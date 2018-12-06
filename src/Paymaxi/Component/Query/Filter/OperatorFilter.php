@@ -113,7 +113,7 @@ final class OperatorFilter extends AbstractFilter implements CriteriaFilterInter
      * @param OperatorInterface $operator
      * @param array|string|int|float $value
      *
-     * @return bool|true
+     * @return bool
      */
     protected function validateWithOperator(OperatorInterface $operator, $value): bool
     {
@@ -121,6 +121,6 @@ final class OperatorFilter extends AbstractFilter implements CriteriaFilterInter
             return \call_user_func($operator->getValidator(), $value);
         }
 
-        return parent::validate($value);
+        return $this->validate($value);
     }
 }
