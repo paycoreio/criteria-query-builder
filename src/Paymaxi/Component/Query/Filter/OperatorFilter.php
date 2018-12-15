@@ -85,6 +85,11 @@ final class OperatorFilter extends AbstractFilter implements CriteriaFilterInter
         $values = (array) $values;
 
         foreach ($values as $queryOperator => $value) {
+            if (false === \is_scalar($queryOperator)) {
+                throw new \RuntimeException('Operator name must be scalar value.');
+            }
+
+            $queryOperator = (string)$queryOperator;
             if (!array_key_exists($queryOperator, $this->operators)) {
                 $this->thrower->operatorIsNotDefined($queryOperator);
             }
