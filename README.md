@@ -3,6 +3,7 @@ Doctrine criteria query builder
 [![Build Status][ico-travis]][link-travis]
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Coverage Status][ico-scrutinizer]][link-scrutinizer]
+[![Total Downloads](https://poser.pugx.org/paymaxi/query/downloads?format=flat-square)](https://packagist.org/packages/paymaxi/query)
 [![Software License][ico-license]](LICENSE.md)
 
 This package provides ability to build doctrine criteria query from filter and sorting metadata. It was 
