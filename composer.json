@@ -4,7 +4,7 @@
   "type": "project",
   "require": {
     "php": "^7.1",
-    "doctrine/orm": "2.6.6",
+    "doctrine/orm": ">=2.6 < 2.7",
     "neomerx/json-api": "^3.0",
     "nesbot/carbon": "^1.21|^2.0",
     "ramsey/uuid": "^3.5",
