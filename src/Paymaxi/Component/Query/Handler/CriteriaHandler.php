@@ -47,7 +47,7 @@ final class CriteriaHandler extends AbstractHandler
      */
     protected function handleSorting(SortInterface $sort, string $order):void
     {
-        $this->sortParams = array_merge($this->sortParams, [$sort->getFieldName() => $order]);
+        $this->sortParams = \array_merge($this->sortParams, [$sort->getFieldName() => $order]);
         $sort->applyCriteria($this->criteria, $this->sortParams);
     }
 
