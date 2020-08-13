@@ -19,6 +19,8 @@ final class CriteriaHandler extends AbstractHandler
     /** @var Criteria */
     private $criteria;
 
+    private $sortParams = [];
+
     /**
      * CriteriaHandler constructor.
      *
@@ -45,7 +47,8 @@ final class CriteriaHandler extends AbstractHandler
      */
     protected function handleSorting(SortInterface $sort, string $order):void
     {
-        $sort->applyCriteria($this->criteria, $order);
+        $this->sortParams = array_merge($this->sortParams, [$sort->getFieldName() => $order]);
+        $sort->applyCriteria($this->criteria, $this->sortParams);
     }
 
     /**
