@@ -27,7 +27,7 @@ class CriteriaQueryBuilderTest extends TestCase
     /** @var EntityManager */
     private $em;
 
-    public function setUp()
+    public function setUp(): void
     {
         $connectionParams = ['url' => 'sqlite://:memory:'];
         $config = Setup::createXMLMetadataConfiguration(array(__DIR__ . "/mapping"), true);
@@ -38,7 +38,7 @@ class CriteriaQueryBuilderTest extends TestCase
         $this->schemaTool->createSchema($this->em->getMetadataFactory()->getAllMetadata());
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->schemaTool->dropDatabase();
     }
@@ -96,7 +96,7 @@ class CriteriaQueryBuilderTest extends TestCase
     public function this_throw_exception_on_missing_default_order_field()
     {
         $this->expectException(QueryException::class);
-        $this->expectExceptionMessageRegExp('@has no field or association named created$@');
+        $this->expectExceptionMessageMatches('@has no field or association named created$@');
         $qb = $this->getAuthorQb();
         $qb->setDefaultOrder([]);
 

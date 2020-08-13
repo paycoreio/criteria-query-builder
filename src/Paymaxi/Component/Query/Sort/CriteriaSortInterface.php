@@ -14,7 +14,7 @@ interface CriteriaSortInterface extends SortInterface
 {
     /**
      * @param Criteria $criteria
-     * @param string $orderField
+     * @param array $sortParams
      */
-    public function applyCriteria(Criteria $criteria, string $orderField): void;
+    public function applyCriteria(Criteria $criteria, array $sortParams): void;
 }

@@ -14,12 +14,12 @@ final class StaticSorting extends AbstractSorting implements CriteriaSortInterfa
 {
     /**
      * @param Criteria $criteria
-     * @param string $orderField
+     * @param array $sortParams
      *
      * @return void
      */
-    public function applyCriteria(Criteria $criteria, string $orderField): void
+    public function applyCriteria(Criteria $criteria, array $sortParams): void
     {
-        $criteria->orderBy([$this->getFieldName() => $orderField]);
+        $criteria->orderBy($sortParams);
     }
 }
