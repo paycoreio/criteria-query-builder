@@ -15,8 +15,10 @@ use Paymaxi\Component\Query\Filter\OperatorFilter;
 use Paymaxi\Component\Query\Filter\ScalarFilter;
 use Paymaxi\Component\Query\Operator\DateTimeOperator;
 use Paymaxi\Component\Query\Operator\OperatorInterface;
+use Paymaxi\Component\Query\Sort\StaticSorting;
 use Paymaxi\Component\Query\Tests\Entity\Author;
 use Paymaxi\Component\Query\Tests\Entity\Book;
+use Paymaxi\Component\Query\Tests\Entity\BookWithCreated;
 use PHPUnit\Framework\TestCase;
 
 class CriteriaQueryBuilderTest extends TestCase
@@ -26,6 +28,8 @@ class CriteriaQueryBuilderTest extends TestCase
 
     /** @var EntityManager */
     private $em;
+
+    public const DEFAULT_ORDER_FIELD = CriteriaQueryBuilder::DEFAULT_ORDER_FIELD;
 
     public function setUp(): void
     {
@@ -59,9 +63,14 @@ class CriteriaQueryBuilderTest extends TestCase
         return $qb;
     }
 
-    public function getBookQb()
+    public function getBookQb(bool $withCreated = false)
     {
-        $qb = new CriteriaQueryBuilder($this->em->getRepository(Book::class));
+        if($withCreated) {
+            $qb = new CriteriaQueryBuilder($this->em->getRepository(BookWithCreated::class));
+        }
+        else {
+            $qb = new CriteriaQueryBuilder($this->em->getRepository(Book::class));
+        }
 
         $qb->addFilter(new ScalarFilter('name'));
         $qb->addFilter(new BooleanFilter('published', 'published', BooleanFilter::CAST_STRINGS));
@@ -93,14 +102,13 @@ class CriteriaQueryBuilderTest extends TestCase
     /**
      * @test
      */
-    public function this_throw_exception_on_missing_default_order_field()
+    public function check_if_correct_changing_default_order()
     {
-        $this->expectException(QueryException::class);
-        $this->expectExceptionMessageMatches('@has no field or association named created$@');
         $qb = $this->getAuthorQb();
         $qb->setDefaultOrder([]);
 
-        $qb->getQb()->getQuery()->getSQL();
+        $sql = $qb->getQb()->getQuery()->getSQL();
+        $this->assertStringNotContainsString('ORDER BY', $sql, 'The query contains ORDER BY statement, but default order is empty');
     }
 
     /**
@@ -141,5 +149,72 @@ class CriteriaQueryBuilderTest extends TestCase
         );
         $this->assertCount(1, $query->getParameters());
         $this->assertTrue($query->getParameter('published')->getValue());
+    }
+
+    public function test_default_order_if_entity_not_contains_created_field()
+    {
+        $qb = $this->getBookQb();
+        $sql = $qb->getQb()->getQuery()->getSQL();
+        $this->assertStringNotContainsString('ORDER BY', $sql);
+    }
+
+    public function test_default_order_if_entity_contains_created_field()
+    {
+        $qb = $this->getBookQb(true);
+        $qb->addSorting(new StaticSorting(static::DEFAULT_ORDER_FIELD));
+        $sql = $qb->getQb()->getQuery()->getSQL();
+        $this->assertStringContainsString('ORDER BY b0_.created DESC', $sql);
+    }
+
+    public function test_default_order_if_default_order_already_exists()
+    {
+        $qb = $this->getBookQb(true);
+        $qb->setDefaultOrder(['name' => 'DESC']);
+        $qb->addSorting(new StaticSorting(static::DEFAULT_ORDER_FIELD));
+        $sql = $qb->getQb()->getQuery()->getSQL();
+        $this->assertStringContainsString('ORDER BY b0_.name DESC, b0_.created DESC', $sql);
+    }
+
+    public function test_default_order_if_default_order_already_exists_and_entity_not_contains_created_field()
+    {
+        $qb = $this->getBookQb();
+        $qb->setDefaultOrder(['name' => 'DESC']);
+        $sql = $qb->getQb()->getQuery()->getSQL();
+        $this->assertStringContainsString('ORDER BY b0_.name DESC', $sql);
+        $this->assertStringNotContainsString('b0_.'.static::DEFAULT_ORDER_FIELD.' DESC', $sql);
+    }
+
+    public function test_default_order_if_default_order_already_contains_created_field()
+    {
+        $qb = $this->getBookQb(true);
+        $qb->setDefaultOrder([static::DEFAULT_ORDER_FIELD => 'DESC']);
+        $qb->addSorting(new StaticSorting(static::DEFAULT_ORDER_FIELD));
+        $sql = $qb->getQb()->getQuery()->getSQL();
+        $compareSql = 'SELECT b0_.name AS name_0, b0_.published AS published_1, b0_.id AS id_2, b0_.created AS ' .
+        'created_3 FROM BookWithCreated b0_ ORDER BY b0_.'.static::DEFAULT_ORDER_FIELD.' DESC';
+        $this->assertEquals($compareSql, $sql);
+    }
+
+    public function test_default_order_if_order_by_created_already_exists_in_query()
+    {
+        $qb = $this->getBookQb(true);
+        $qb->addSorting(new StaticSorting(static::DEFAULT_ORDER_FIELD));
+        $qb->setSortingFields([static::DEFAULT_ORDER_FIELD => 'ASC']);
+        $sql = $qb->getQb()->getQuery()->getSQL();
+        $compareSql = 'SELECT b0_.name AS name_0, b0_.published AS published_1, b0_.id AS id_2, b0_.created AS '.
+            'created_3 FROM BookWithCreated b0_ ORDER BY b0_.'.static::DEFAULT_ORDER_FIELD.' ASC';
+        $this->assertEquals($compareSql, $sql);
+    }
+
+    public function test_default_order_if_order_by_created_already_exists_in_query_and_in_default_order()
+    {
+        $qb = $this->getBookQb(true);
+        $qb->addSorting(new StaticSorting(static::DEFAULT_ORDER_FIELD));
+        $qb->setDefaultOrder([static::DEFAULT_ORDER_FIELD => 'DESC']);
+        $qb->setSortingFields([static::DEFAULT_ORDER_FIELD => 'ASC']);
+        $sql = $qb->getQb()->getQuery()->getSQL();
+        $compareSql = 'SELECT b0_.name AS name_0, b0_.published AS published_1, b0_.id AS id_2, b0_.created AS '.
+            'created_3 FROM BookWithCreated b0_ ORDER BY b0_.'.static::DEFAULT_ORDER_FIELD.' ASC';
+        $this->assertEquals($compareSql, $sql);
     }
 }

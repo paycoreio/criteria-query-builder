@@ -43,6 +43,10 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
     /** @var bool */
     private $applied = false;
 
+    public const DEFAULT_ORDER_FIELD = 'created';
+
+    private $supportedSortingFields = [];
+
     /**
      * @param EntityRepository $repository
      * @param array $filterParams
@@ -112,6 +116,7 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
             if ($handler instanceof SortHandlerInterface && $handler->supports($sort)) {
                 $supports = true;
                 $handler->addSorting($sort);
+                $this->supportedSortingFields[] = $sort->getFieldName();
             }
         }
 
@@ -147,6 +152,10 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
 
         if (0 === \count($this->sortingFields)) {
             $this->criteria->orderBy($this->getDefaultOrder());
+        } else {
+            if (!isset($this->sortingFields[self::DEFAULT_ORDER_FIELD])) {
+                $this->sortingFields = array_merge($this->sortingFields, $this->orderByDefaultField());
+            }
         }
 
         $this->applySorting();
@@ -192,7 +201,12 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
      */
     public function getDefaultOrder(): array
     {
-        return !empty($this->defaultOrder) ? $this->defaultOrder : ['created' => 'DESC'];
+        $order = $this->defaultOrder ?? [];
+        if (in_array(self::DEFAULT_ORDER_FIELD, $this->supportedSortingFields) &&
+            !isset($order[self::DEFAULT_ORDER_FIELD])) {
+            $order = array_merge($order, $this->orderByDefaultField());
+        }
+        return $order;
     }
 
     /**
@@ -238,5 +252,15 @@ class CriteriaQueryBuilder implements CriteriaQueryBuilderInterface
     public function addHandler(string $identifier, HandlerInterface $handler):void
     {
         $this->handlers->register($identifier, $handler);
+    }
+
+    public function getSupportedSortingFields() : array
+    {
+        return $this->supportedSortingFields;
+    }
+
+    private function orderByDefaultField() : array
+    {
+        return [self::DEFAULT_ORDER_FIELD => 'DESC'];
     }
 }
