@@ -26,6 +26,10 @@ final class ScalarFilter extends AbstractFilter implements CriteriaFilterInterfa
             $this->thrower->invalidValueForKey($this->getFieldName());
         }
 
-        $criteria->andWhere(Criteria::expr()->eq($this->fieldName, $value));
+        if (strpos($value, self::REVERSE_FILTER_SYMBOL) === 0) {
+            $criteria->andWhere(Criteria::expr()->neq($this->fieldName, substr($value, 1)));
+        } else {
+            $criteria->andWhere(Criteria::expr()->eq($this->fieldName, $value));
+        }
     }
 }
