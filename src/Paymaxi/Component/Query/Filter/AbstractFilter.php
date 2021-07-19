@@ -28,6 +28,8 @@ abstract class AbstractFilter implements FilterInterface
     /** @var QueryExceptionThrowerInterface */
     protected $thrower;
 
+    protected const REVERSE_FILTER_SYMBOL = '-';
+
     /**
      * AbstractFilter constructor.
      *
