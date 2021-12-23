@@ -75,6 +75,7 @@ final class EnumerationFilter extends AbstractFilter implements CriteriaFilterIn
 
         if (count($notInValues) > 0) {
             $criteria->andWhere(Criteria::expr()->notIn($this->fieldName, $notInValues));
+            $criteria->orWhere(Criteria::expr()->isNull($this->fieldName));
         } else {
             $criteria->andWhere(Criteria::expr()->in($this->fieldName, $inValues));
         }
