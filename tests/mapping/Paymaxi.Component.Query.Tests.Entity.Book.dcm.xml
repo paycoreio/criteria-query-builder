@@ -8,6 +8,7 @@
         <id name="id" type="string"/>
         <field name="name" length="128"/>
         <field name="published" type="boolean"/>
+        <field name="description" nullable="true"/>
         <many-to-many target-entity="Paymaxi\Component\Query\Tests\Entity\Author" field="authors"/>
     </mapped-superclass>
 </doctrine-mapping>

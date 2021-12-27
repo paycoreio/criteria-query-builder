@@ -27,6 +27,8 @@ class Book
      */
     private $authors;
 
+    private ?string $description = null;
+
     public function __construct(string $name, \DateTime $birth)
     {
         $this->id = uniqid();
@@ -61,5 +63,15 @@ class Book
     public function setPublished(bool $published)
     {
         $this->published = $published;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
     }
 }
