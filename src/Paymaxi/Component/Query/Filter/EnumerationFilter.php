@@ -67,15 +67,19 @@ final class EnumerationFilter extends AbstractFilter implements CriteriaFilterIn
 
         foreach ($values as $item) {
             if (strpos((string) $item, self::REVERSE_FILTER_SYMBOL) === 0) {
-                $notInValues[] =  substr((string) $item, 1);
+                $notInValues[] = substr((string) $item, 1);
                 continue;
             }
             $inValues[] = $item;
         }
 
         if (count($notInValues) > 0) {
-            $criteria->andWhere(Criteria::expr()->notIn($this->fieldName, $notInValues));
-            $criteria->orWhere(Criteria::expr()->isNull($this->fieldName));
+            $criteria->andWhere(
+                Criteria::expr()->orX(
+                    Criteria::expr()->notIn($this->fieldName, $notInValues),
+                    Criteria::expr()->isNull($this->fieldName)
+                )
+            );
         } else {
             $criteria->andWhere(Criteria::expr()->in($this->fieldName, $inValues));
         }

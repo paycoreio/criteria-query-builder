@@ -11,6 +11,7 @@ use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\Setup;
 use Paymaxi\Component\Query\CriteriaQueryBuilder;
 use Paymaxi\Component\Query\Filter\BooleanFilter;
+use Paymaxi\Component\Query\Filter\EnumerationFilter;
 use Paymaxi\Component\Query\Filter\OperatorFilter;
 use Paymaxi\Component\Query\Filter\ScalarFilter;
 use Paymaxi\Component\Query\Operator\DateTimeOperator;
@@ -108,7 +109,7 @@ class CriteriaQueryBuilderTest extends TestCase
         $qb->setDefaultOrder([]);
 
         $sql = $qb->getQb()->getQuery()->getSQL();
-        $this->assertStringNotContainsString('ORDER BY', $sql, 'The query contains ORDER BY statement, but default order is empty');
+        self::assertStringNotContainsString('ORDER BY', $sql, 'The query contains ORDER BY statement, but default order is empty');
     }
 
     /**
@@ -123,11 +124,11 @@ class CriteriaQueryBuilderTest extends TestCase
         ]);
 
         $query = $qb->getQb()->getQuery();
-        $this->assertSame(
+        self::assertSame(
             'SELECT a0_.name AS name_0, a0_.birth AS birth_1, a0_.id AS id_2 FROM Author a0_ WHERE a0_.birth >= ? ORDER BY a0_.birth DESC',
             $query->getSQL()
         );
-        $this->assertCount(1, $query->getParameters());
+        self::assertCount(1, $query->getParameters());
     }
 
     /**
@@ -143,19 +144,19 @@ class CriteriaQueryBuilderTest extends TestCase
         ]);
 
         $query = $qb->getQb()->getQuery();
-        $this->assertSame(
-            'SELECT b0_.name AS name_0, b0_.published AS published_1, b0_.id AS id_2 FROM Book b0_ WHERE b0_.published = ? ORDER BY b0_.name DESC',
+        self::assertSame(
+            'SELECT b0_.name AS name_0, b0_.published AS published_1, b0_.description AS description_2, b0_.id AS id_3 FROM Book b0_ WHERE b0_.published = ? ORDER BY b0_.name DESC',
             $query->getSQL()
         );
-        $this->assertCount(1, $query->getParameters());
-        $this->assertTrue($query->getParameter('published')->getValue());
+        self::assertCount(1, $query->getParameters());
+        self::assertTrue($query->getParameter('published')->getValue());
     }
 
     public function test_default_order_if_entity_not_contains_created_field()
     {
         $qb = $this->getBookQb();
         $sql = $qb->getQb()->getQuery()->getSQL();
-        $this->assertStringNotContainsString('ORDER BY', $sql);
+        self::assertStringNotContainsString('ORDER BY', $sql);
     }
 
     public function test_default_order_if_entity_contains_created_field()
@@ -163,7 +164,7 @@ class CriteriaQueryBuilderTest extends TestCase
         $qb = $this->getBookQb(true);
         $qb->addSorting(new StaticSorting(static::DEFAULT_ORDER_FIELD));
         $sql = $qb->getQb()->getQuery()->getSQL();
-        $this->assertStringContainsString('ORDER BY b0_.created DESC', $sql);
+        self::assertStringContainsString('ORDER BY b0_.created DESC', $sql);
     }
 
     public function test_default_order_if_default_order_already_exists()
@@ -172,7 +173,7 @@ class CriteriaQueryBuilderTest extends TestCase
         $qb->setDefaultOrder(['name' => 'DESC']);
         $qb->addSorting(new StaticSorting(static::DEFAULT_ORDER_FIELD));
         $sql = $qb->getQb()->getQuery()->getSQL();
-        $this->assertStringContainsString('ORDER BY b0_.name DESC, b0_.created DESC', $sql);
+        self::assertStringContainsString('ORDER BY b0_.name DESC, b0_.created DESC', $sql);
     }
 
     public function test_default_order_if_default_order_already_exists_and_entity_not_contains_created_field()
@@ -180,8 +181,8 @@ class CriteriaQueryBuilderTest extends TestCase
         $qb = $this->getBookQb();
         $qb->setDefaultOrder(['name' => 'DESC']);
         $sql = $qb->getQb()->getQuery()->getSQL();
-        $this->assertStringContainsString('ORDER BY b0_.name DESC', $sql);
-        $this->assertStringNotContainsString('b0_.'.static::DEFAULT_ORDER_FIELD.' DESC', $sql);
+        self::assertStringContainsString('ORDER BY b0_.name DESC', $sql);
+        self::assertStringNotContainsString('b0_.'.static::DEFAULT_ORDER_FIELD.' DESC', $sql);
     }
 
     public function test_default_order_if_default_order_already_contains_created_field()
@@ -190,9 +191,9 @@ class CriteriaQueryBuilderTest extends TestCase
         $qb->setDefaultOrder([static::DEFAULT_ORDER_FIELD => 'DESC']);
         $qb->addSorting(new StaticSorting(static::DEFAULT_ORDER_FIELD));
         $sql = $qb->getQb()->getQuery()->getSQL();
-        $compareSql = 'SELECT b0_.name AS name_0, b0_.published AS published_1, b0_.id AS id_2, b0_.created AS ' .
-        'created_3 FROM BookWithCreated b0_ ORDER BY b0_.'.static::DEFAULT_ORDER_FIELD.' DESC';
-        $this->assertEquals($compareSql, $sql);
+        $compareSql = 'SELECT b0_.name AS name_0, b0_.published AS published_1, b0_.description AS description_2, b0_.id AS id_3, b0_.created AS ' .
+        'created_4 FROM BookWithCreated b0_ ORDER BY b0_.'.static::DEFAULT_ORDER_FIELD.' DESC';
+        self::assertEquals($compareSql, $sql);
     }
 
     public function test_default_order_if_order_by_created_already_exists_in_query()
@@ -201,9 +202,9 @@ class CriteriaQueryBuilderTest extends TestCase
         $qb->addSorting(new StaticSorting(static::DEFAULT_ORDER_FIELD));
         $qb->setSortingFields([static::DEFAULT_ORDER_FIELD => 'ASC']);
         $sql = $qb->getQb()->getQuery()->getSQL();
-        $compareSql = 'SELECT b0_.name AS name_0, b0_.published AS published_1, b0_.id AS id_2, b0_.created AS '.
-            'created_3 FROM BookWithCreated b0_ ORDER BY b0_.'.static::DEFAULT_ORDER_FIELD.' ASC';
-        $this->assertEquals($compareSql, $sql);
+        $compareSql = 'SELECT b0_.name AS name_0, b0_.published AS published_1, b0_.description AS description_2, b0_.id AS id_3, b0_.created AS '.
+            'created_4 FROM BookWithCreated b0_ ORDER BY b0_.'.static::DEFAULT_ORDER_FIELD.' ASC';
+        self::assertEquals($compareSql, $sql);
     }
 
     public function test_default_order_if_order_by_created_already_exists_in_query_and_in_default_order()
@@ -213,8 +214,42 @@ class CriteriaQueryBuilderTest extends TestCase
         $qb->setDefaultOrder([static::DEFAULT_ORDER_FIELD => 'DESC']);
         $qb->setSortingFields([static::DEFAULT_ORDER_FIELD => 'ASC']);
         $sql = $qb->getQb()->getQuery()->getSQL();
-        $compareSql = 'SELECT b0_.name AS name_0, b0_.published AS published_1, b0_.id AS id_2, b0_.created AS '.
-            'created_3 FROM BookWithCreated b0_ ORDER BY b0_.'.static::DEFAULT_ORDER_FIELD.' ASC';
-        $this->assertEquals($compareSql, $sql);
+        $compareSql = 'SELECT b0_.name AS name_0, b0_.published AS published_1, b0_.description AS description_2, b0_.id AS id_3, b0_.created AS '.
+            'created_4 FROM BookWithCreated b0_ ORDER BY b0_.'.static::DEFAULT_ORDER_FIELD.' ASC';
+        self::assertEquals($compareSql, $sql);
+    }
+
+    public function test_scalar_filter_with_inverse_nullable_fields(): void
+    {
+        $qb = $this->getBookQb(true);
+        $qb->addFilter(new ScalarFilter('description'));
+        $qb->addFilter(new ScalarFilter('name'));
+
+        $qb->setFilterParams([
+            'description' => '-test',
+            'name' => 'test',
+        ]);
+
+        $expectedSql = 'SELECT b0_.name AS name_0, b0_.published AS published_1, b0_.description AS description_2, b0_.id AS id_3, b0_.created AS '.
+        'created_4 FROM BookWithCreated b0_ WHERE ((b0_.description <> ? OR b0_.description IS NULL) AND b0_.name = ?) AND b0_.name = ?';
+
+        self::assertEquals($expectedSql, $qb->getQb()->getQuery()->getSQL());
+    }
+
+    public function test_enumeration_filter_with_inverse_nullable_fields(): void
+    {
+        $qb = $this->getBookQb(true);
+
+        $qb->addFilter(new EnumerationFilter('description'));
+        $qb->addFilter(new ScalarFilter('name'));
+        $qb->setFilterParams([
+            'description' => '-test',
+            'name' => 'test',
+        ]);
+
+        $expectedSql = 'SELECT b0_.name AS name_0, b0_.published AS published_1, b0_.description AS description_2, b0_.id AS id_3, b0_.created AS ' .
+        'created_4 FROM BookWithCreated b0_ WHERE ((b0_.description NOT IN (?) OR b0_.description IS NULL) AND b0_.name = ?) AND b0_.name = ?';
+
+        self::assertEquals($expectedSql, $qb->getQb()->getQuery()->getSQL());
     }
 }
