@@ -7,7 +7,7 @@
     "doctrine/orm": "^2.5",
     "neomerx/json-api": "^1.0|^2.0",
     "nesbot/carbon": "^1.21|^2.4",
-    "ramsey/uuid": "^3.5",
+    "ramsey/uuid": "^3.5|^4.0",
     "sylius/registry": "^0.19.0|^1.0"
   },
   "require-dev": {
